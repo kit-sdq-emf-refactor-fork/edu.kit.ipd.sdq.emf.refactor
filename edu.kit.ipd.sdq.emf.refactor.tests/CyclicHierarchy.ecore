@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="testPackage" nsURI="http://testPackage" nsPrefix="testPackage">
+  <eClassifiers xsi:type="ecore:EClass" name="SuperType">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="knownDerived" eType="ecore:EClass CyclicHierarchy.ecore#//SubSubType"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="SubType" eSuperTypes="CyclicHierarchy.ecore#//SuperType"/>
+  <eClassifiers xsi:type="ecore:EClass" name="SubSubType" eSuperTypes="CyclicHierarchy.ecore#//SubType"/>
+</ecore:EPackage>

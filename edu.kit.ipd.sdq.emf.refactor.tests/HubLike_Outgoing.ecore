@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="testPackage" nsURI="http://testPackage" nsPrefix="testPackage">
+  <eClassifiers xsi:type="ecore:EClass" name="HubClass">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="testReference1" eType="ecore:EClass HubLike_Outgoing.ecore#//Class1"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="testReference2" eType="ecore:EClass HubLike_Outgoing.ecore#//Class2"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="testReference3" eType="ecore:EClass HubLike_Outgoing.ecore#//Class3"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="testReference4" eType="ecore:EClass HubLike_Outgoing.ecore#//Class4"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="testReference5" eType="ecore:EClass HubLike_Outgoing.ecore#//Class5"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Class1"/>
+  <eClassifiers xsi:type="ecore:EClass" name="Class2"/>
+  <eClassifiers xsi:type="ecore:EClass" name="Class3"/>
+  <eClassifiers xsi:type="ecore:EClass" name="Class4"/>
+  <eClassifiers xsi:type="ecore:EClass" name="Class5"/>
+</ecore:EPackage>

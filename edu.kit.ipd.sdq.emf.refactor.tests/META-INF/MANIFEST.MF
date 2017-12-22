@@ -1,0 +1,16 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Tests
+Bundle-SymbolicName: edu.kit.ipd.sdq.emf.refactor.tests
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: edu.kit.ipd.sdq.emf.refactor.tests.Activator
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ org.eclipse.emf.ecore,
+ org.junit,
+ org.eclipse.emf.ecore.xmi;bundle-version="2.13.0",
+ org.eclipse.emf.refactor.smells.runtime;bundle-version="0.9.0",
+ org.eclipse.emf.refactor.smells;bundle-version="0.9.0",
+ edu.kit.ipd.sdq.emf.refactor.smells
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-ActivationPolicy: lazy

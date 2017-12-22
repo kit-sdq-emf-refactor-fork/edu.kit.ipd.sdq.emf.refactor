@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Bundle-SymbolicName: edu.kit.ipd.sdq.emf.refactor.metrics;singleton:=true
+Bundle-Name: Metrics
+Bundle-Version: 1.0.0.qualifier
+Require-Bundle: org.eclipse.ui,org.eclipse.core.runtime,org.eclipse.em
+ f.ecore,org.eclipse.emf.refactor.smells,org.eclipse.emf.refactor.metr
+ ics,org.eclipse.emf.common,org.eclipse.emf.refactor.metrics.ocl
+Bundle-ManifestVersion: 2
+Bundle-Activator: edu.kit.ipd.sdq.emf.refactor.metrics.Activator
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+

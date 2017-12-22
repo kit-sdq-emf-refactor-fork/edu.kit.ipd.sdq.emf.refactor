@@ -1,0 +1,14 @@
+Manifest-Version: 1.0
+Bundle-SymbolicName: edu.kit.ipd.sdq.emf.refactor.smells;singleton:=tr
+ ue
+Export-Package: org.eclipse.emf.refactor.modelsmell
+Bundle-Name: Detection
+Bundle-Version: 1.0.0.qualifier
+Require-Bundle: org.eclipse.ui,org.eclipse.core.runtime,org.eclipse.em
+ f.ecore,org.eclipse.emf.refactor.smells,org.eclipse.emf.refactor.metr
+ ics
+Bundle-ManifestVersion: 2
+Bundle-Activator: edu.kit.ipd.sdq.emf.refactor.smells.Activator
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-ActivationPolicy: lazy
+
