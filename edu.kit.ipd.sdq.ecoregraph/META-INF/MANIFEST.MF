@@ -1,0 +1,14 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: EcoreGraph
+Bundle-SymbolicName: edu.kit.ipd.sdq.ecoregraph
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: edu.kit.ipd.sdq.ecoregraph.Activator
+Require-Bundle: org.eclipse.core.runtime,
+ org.eclipse.emf.ecore;bundle-version="2.13.0"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-ActivationPolicy: lazy
+Bundle-ClassPath: jgrapht-core-1.1.0.jar,
+ .
+Export-Package: edu.kit.ipd.sdq.ecoregraph,
+ edu.kit.ipd.sdq.ecoregraph.util
