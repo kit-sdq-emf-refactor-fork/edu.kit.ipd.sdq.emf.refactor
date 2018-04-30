@@ -20,9 +20,7 @@ public class EcoreGraphRegistry {
 	}
 	
 	public void registerEPackage(EPackage ePackage) {
-		//System.out.println("hkj");
 		if (!registry.containsKey(ePackage)) {
-			//System.out.println("Not registered");
 			EcoreGraph graph = new EcoreGraph(ePackage);
 			registry.put(ePackage, graph);
 			
@@ -37,7 +35,7 @@ public class EcoreGraphRegistry {
 			EPackage versionedEPackage = versionTracker.get(ePackage);
 			
 			if (!new EcoreUtil.EqualityHelper().equals(ePackage, versionedEPackage)) {
-				//System.out.println("Registered but has been modified");
+				//Registered but has been modified
 				EcoreGraph graph = new EcoreGraph(ePackage);
 				registry.put(ePackage, graph);
 				
@@ -46,32 +44,30 @@ public class EcoreGraphRegistry {
 				versionTracker.put(ePackage, copy);
 			}
 			else {
-				//System.out.println("Registered and up to date");
+				//Registered and up to date
 			}
 			
 		}
 	}
 	
-	public EcoreGraph getEcoreGraph(EPackage ePackage) {
-		//System.out.println("hbkjl");
+	public EcoreGraph getEcoreGraph(EPackage ePackage) throws NullPointerException {
 		if (!registry.containsKey(ePackage)) {
-			//System.out.println("Not registered");
-			return null;
+			//Not registered
+			throw new NullPointerException("The EPackage is not registered");
 		}
 		else {
 			EPackage versionedEPackage = versionTracker.get(ePackage);
 			
 			if (!new EcoreUtil.EqualityHelper().equals(ePackage, versionedEPackage)) {
-				//System.out.println("Registered but has been modified");
+				//Registered but has been modified
 				EcoreGraph graph = new EcoreGraph(ePackage);
 				registry.put(ePackage, graph);
 				
 				EPackage copy = copyEObject(ePackage);
 				versionTracker.put(ePackage, copy);
 			}
-			else {
-				//System.out.println("Registered and up to date");
-			}
+			//Registered and up to date
+			
 		}
 		return registry.get(ePackage);
 	}

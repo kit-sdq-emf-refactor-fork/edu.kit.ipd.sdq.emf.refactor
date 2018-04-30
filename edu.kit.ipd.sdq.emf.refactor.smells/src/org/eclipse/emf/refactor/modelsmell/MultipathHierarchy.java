@@ -2,7 +2,6 @@ package org.eclipse.emf.refactor.modelsmell;
 
 import java.util.Collection;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Set;
 
 import org.eclipse.emf.ecore.EClass;
@@ -15,8 +14,9 @@ import edu.kit.ipd.sdq.ecoregraph.EcoreGraphRegistry;
 import edu.kit.ipd.sdq.ecoregraph.util.MultipathHierarchyDetector;
 
 /**
- * This class detects if the same EClass inherits from the same EClass over different pathes.
+ * This class detects if the same EClass inherits from the same EClass over different paths.
  * @author renehahn
+ * @author Amine Kechaou
  *
  */
 public final class MultipathHierarchy implements IModelSmellFinder {
@@ -35,10 +35,6 @@ public final class MultipathHierarchy implements IModelSmellFinder {
 			results.add(new LinkedList<EObject>(path));
 		}
 		
-//		List<List<EClass>> multipaths = detector.getMultipaths();
-//		for (List<EClass> path : multipaths) {
-//			results.add(new LinkedList<EObject>(path));
-//		}
 		
 		return results;
 	}

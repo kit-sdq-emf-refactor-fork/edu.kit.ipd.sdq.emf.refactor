@@ -24,12 +24,13 @@ public class EcoreGraph {
 	private DefaultDirectedGraph<EClassifier, DefaultEdge> graph;
 	private Map<EClassifier, Set<Dependency>> dependencies;
 	private Queue<EClassifier> queuedEClassifiers;
+	private Set<EClassifier> visitedEClassifiers;
 	public EcoreGraph(EPackage root) {
 		this.root = root;
 
 		this.graph = new DefaultDirectedGraph<EClassifier, DefaultEdge>(DefaultEdge.class);
 		this.dependencies = new HashMap<EClassifier, Set<Dependency>>();
-		
+		this.visitedEClassifiers = new HashSet<EClassifier>();
 
 		this.queuedEClassifiers = new LinkedList<EClassifier>();
 		this.queuedEClassifiers.addAll(getAllEClassifiers(root));
@@ -52,6 +53,7 @@ public class EcoreGraph {
 	private void computeGraph() {
         while (!queuedEClassifiers.isEmpty()) {
         	EClassifier eClassifier = queuedEClassifiers.poll();
+        	
         	
         	// Add vertex to graph
         	addVertex(eClassifier);
@@ -95,8 +97,9 @@ public class EcoreGraph {
                 x.getETypeParameters().forEach(y -> visitTypeParam(y, eClass));
 
             });
-            
+            visitedEClassifiers.add(eClassifier);
         }
+        
 		
 	}
     
@@ -117,7 +120,7 @@ public class EcoreGraph {
         EClassifier target = dependency.getTarget();
         
         addVertex(target);
-		if (!dependencies.containsKey(target) && !queuedEClassifiers.contains(target))
+		if (!visitedEClassifiers.contains(target) && !queuedEClassifiers.contains(target))
 			queuedEClassifiers.add(target);
         
         graph.addEdge(source, target);      
