@@ -1,17 +1,18 @@
 package org.eclipse.emf.refactor.modelsmell;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.refactor.smells.interfaces.IModelSmellFinder;
 
 import edu.kit.ipd.sdq.emf.refactor.smells.util.DetectionHelper;
 
 /**
  * This class checks if a EClass is unused
+ * 
  * @author renehahn
  *
  */
@@ -20,63 +21,34 @@ public final class UnutilizedAbstraction_UnusedClasses implements IModelSmellFin
 	@Override
 	public LinkedList<LinkedList<EObject>> findSmell(EObject root) {
 		LinkedList<LinkedList<EObject>> results = new LinkedList<LinkedList<EObject>>();
+
+
 		List<EClass> classes = DetectionHelper.getAllEClasses(root);
-		for(EClass currentClass : classes)
-		{
-			if(!isClassUsed(currentClass, classes))
-			{
+		for (EClass currentClass : classes) {
+			if (classes.stream()
+					.noneMatch(c -> c.getEReferences().stream()
+							.anyMatch(r -> r.isContainment() && (r.getEReferenceType().equals(currentClass)
+									|| currentClass.getEAllSuperTypes().stream()
+											.anyMatch(sup -> r.getEReferenceType().equals(sup))
+									|| getAllSubTypes(currentClass, classes).stream()
+											.anyMatch(sub -> r.getEReferenceType().equals(sub)))))) {
 				LinkedList<EObject> result = new LinkedList<EObject>();
 				result.add(currentClass);
 				results.add(result);
 			}
-		}		
-		
+
+		}
+
 		return results;
 	}
-	
-	private boolean isClassUsed(EClass currentClass, List<EClass> allClasses)
-	{
-		boolean result = false;
-		result |= hasClassSuperTypesOrRealizesInterface(currentClass);
-		result |= hasSubClasses(currentClass, allClasses);
-		result |= isUsedAsType(currentClass, allClasses);		
+
+	List<EClass> getAllSubTypes(EClass superClass, List<EClass> classes) {
+		List<EClass> result = new ArrayList<EClass>();
+		for (EClass c : classes) {
+			if (c.getEAllSuperTypes().contains(superClass)) {
+				result.add(c);
+			}
+		}
 		return result;
-	}
-	
-	private boolean hasClassSuperTypesOrRealizesInterface(EClass currentClass)
-	{
-		List<EClass> superTypes = currentClass.getEAllSuperTypes();
-		if(superTypes.isEmpty()) return false;
-		return true;			
-	}
-	
-	private boolean hasSubClasses(EClass currentClass, List<EClass> allClasses)
-	{
-		for(EClass clazz : allClasses)
-		{
-			for(EClass superType : clazz.getESuperTypes())
-			{
-				if(currentClass.equals(superType))
-				{
-					return true;
-				}
-			}
-		}
-		return false;
-	}
-	
-	private boolean isUsedAsType(EClass currentClass, List<EClass> allClasses)
-	{
-		for(EClass clazz : allClasses)
-		{
-			for(EReference reference : clazz.getEAllReferences())
-			{
-				if(reference.getEType().equals(currentClass))
-				{
-					return true;
-				}				
-			}
-		}
-		return false;
 	}
 }

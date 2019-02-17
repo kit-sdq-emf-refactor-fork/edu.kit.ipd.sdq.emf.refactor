@@ -7,8 +7,8 @@ import java.util.List;
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
-import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.refactor.smells.interfaces.IModelSmellFinder;
+import org.eclipse.emf.refactor.smells.runtime.core.ModelSmellFinder;
 
 import edu.kit.ipd.sdq.ecoregraph.EcoreGraph;
 import edu.kit.ipd.sdq.ecoregraph.EcoreGraphRegistry;
@@ -24,10 +24,10 @@ public final class CyclicDependentModularization implements IModelSmellFinder {
 
 	@Override
 	public LinkedList<LinkedList<EObject>> findSmell(EObject root) {
-		EPackage ePackage = (EPackage) root;
-		EcoreUtil.resolveAll(root.eResource().getResourceSet());
+		//EPackage ePackage = (EPackage) root;
 		
-		EcoreGraph graph = EcoreGraphRegistry.INSTANCE.getEcoreGraph(ePackage);
+		//EcoreGraph graph = EcoreGraphRegistry.INSTANCE.getEcoreGraph(ePackage);
+		EcoreGraph graph = ModelSmellFinder.ecoreGraph;
 		Collection<List<EClassifier>> cycles = EcoreGraphUtil.findSimpleCycles(graph);
 		
 		LinkedList<LinkedList<EObject>> results = new LinkedList<LinkedList<EObject>>();

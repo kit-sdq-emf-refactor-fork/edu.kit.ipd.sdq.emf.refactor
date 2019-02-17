@@ -58,7 +58,7 @@ public class EcoreGraph {
         	// Add vertex to graph
         	addVertex(eClassifier);
 
-        	//The ETypeParameter dependency is available for the types EClasse and EDataType
+        	//The ETypeParameter dependency is available for the types EClass and EDataType
             eClassifier.getETypeParameters().forEach(x -> visitTypeParam(x, eClassifier));            
 
         	//The following dependencies are exclusively available for the type EClass

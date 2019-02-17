@@ -39,7 +39,7 @@ public class MultipathHierarchyDetector {
 	}
 
 	private void findMultipathHierarchies() {
-		AsSubgraph<EClassifier, DefaultEdge> hierarchySubGraph = hierarchySubGraph(eGraph);
+		AsSubgraph<EClassifier, DefaultEdge> hierarchySubGraph = EcoreGraphUtil.hierarchySubGraph(eGraph);
 		Set<EClass> startVertices = hierarchySubGraph.vertexSet().stream()
 				.filter(c -> hierarchySubGraph.outDegreeOf(c) >= 2).map(c -> (EClass) c).collect(Collectors.toSet());
 
@@ -107,44 +107,5 @@ public class MultipathHierarchyDetector {
 			groupedMultipaths.add(currentGroup);
 		}
 		return groupedMultipaths;
-	}
-
-	public static AsSubgraph<EClassifier, DefaultEdge> hierarchySubGraph(EcoreGraph eGraph) {
-		DefaultDirectedGraph<EClassifier, DefaultEdge> graph = eGraph.getGraph();
-		Map<EClassifier, Set<Dependency>> dependencies = eGraph.getDependencies();
-
-		Set<EClass> vertexSubset = graph.vertexSet().stream().filter(x -> x instanceof EClass).map(x -> (EClass) x)
-				.collect(Collectors.toSet());
-		Set<DefaultEdge> edgeSubset = new HashSet<DefaultEdge>();
-
-		Set<EClass> isolatedVertices = new HashSet<EClass>();
-
-		for (EClass c : vertexSubset) {
-			Set<DefaultEdge> incomingEdges = graph.incomingEdgesOf(c);
-			Set<DefaultEdge> allowedIncomingEdges = incomingEdges.stream()
-					.filter(e -> dependencies.get(graph.getEdgeSource(e)).stream()
-							.anyMatch(d -> d.getTarget() == c && d.getType().equals(DependencyType.E_SUPER_TYPE)))
-					.collect(Collectors.toSet());
-			edgeSubset.addAll(allowedIncomingEdges);
-
-			Set<DefaultEdge> outgoingEdges = graph.outgoingEdgesOf(c);
-			Set<DefaultEdge> allowedOutgoingEdges = outgoingEdges
-					.stream().filter(
-							e -> dependencies.get(c).stream()
-									.anyMatch(d -> d.getTarget() == graph.getEdgeTarget(e)
-											&& d.getType().equals(DependencyType.E_SUPER_TYPE)))
-					.collect(Collectors.toSet());
-			edgeSubset.addAll(allowedOutgoingEdges);
-
-			if (allowedIncomingEdges.isEmpty() && allowedOutgoingEdges.isEmpty()) {
-				isolatedVertices.add(c);
-			}
-		}
-		vertexSubset.removeAll(isolatedVertices);
-
-		AsSubgraph<EClassifier, DefaultEdge> asSubgraph = new AsSubgraph<EClassifier, DefaultEdge>(graph, vertexSubset,
-				edgeSubset);
-
-		return asSubgraph;
 	}
 }

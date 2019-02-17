@@ -11,4 +11,5 @@ Bundle-ActivationPolicy: lazy
 Bundle-ClassPath: jgrapht-core-1.1.0.jar,
  .
 Export-Package: edu.kit.ipd.sdq.ecoregraph,
- edu.kit.ipd.sdq.ecoregraph.util
+ edu.kit.ipd.sdq.ecoregraph.util,
+ org.jgrapht.graph

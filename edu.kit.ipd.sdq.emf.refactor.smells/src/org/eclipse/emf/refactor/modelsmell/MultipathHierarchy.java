@@ -8,6 +8,7 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.refactor.smells.interfaces.IModelSmellFinder;
+import org.eclipse.emf.refactor.smells.runtime.core.ModelSmellFinder;
 
 import edu.kit.ipd.sdq.ecoregraph.EcoreGraph;
 import edu.kit.ipd.sdq.ecoregraph.EcoreGraphRegistry;
@@ -25,10 +26,11 @@ public final class MultipathHierarchy implements IModelSmellFinder {
 	public LinkedList<LinkedList<EObject>> findSmell(EObject root) {
 		LinkedList<LinkedList<EObject>> results = new LinkedList<LinkedList<EObject>>();
 		
-		EPackage ePackage = (EPackage) root;
-		EcoreGraph eGraph = EcoreGraphRegistry.INSTANCE.getEcoreGraph(ePackage);
+		//EPackage ePackage = (EPackage) root;
+		//EcoreGraph eGraph = EcoreGraphRegistry.INSTANCE.getEcoreGraph(ePackage);
 		
-		MultipathHierarchyDetector detector = new MultipathHierarchyDetector(eGraph);
+		EcoreGraph graph = ModelSmellFinder.ecoreGraph;
+		MultipathHierarchyDetector detector = new MultipathHierarchyDetector(graph);
 		
 		Collection<Set<EClass>> multipaths = detector.groupMultipaths();
 		for (Set<EClass> path : multipaths) {
