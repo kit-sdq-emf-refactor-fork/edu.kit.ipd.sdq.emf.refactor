@@ -22,16 +22,15 @@ public final class UnutilizedAbstraction_UnusedClasses implements IModelSmellFin
 	public LinkedList<LinkedList<EObject>> findSmell(EObject root) {
 		LinkedList<LinkedList<EObject>> results = new LinkedList<LinkedList<EObject>>();
 
-
 		List<EClass> classes = DetectionHelper.getAllEClasses(root);
 		for (EClass currentClass : classes) {
-			if (classes.stream()
-					.noneMatch(c -> c.getEReferences().stream()
-							.anyMatch(r -> r.isContainment() && (r.getEReferenceType().equals(currentClass)
-									|| currentClass.getEAllSuperTypes().stream()
-											.anyMatch(sup -> r.getEReferenceType().equals(sup))
-									|| getAllSubTypes(currentClass, classes).stream()
-											.anyMatch(sub -> r.getEReferenceType().equals(sub)))))) {
+			if (classes.stream().noneMatch(c -> c.getEReferences().stream()
+					.anyMatch(r -> r.isContainment() && (r.getEReferenceType().equals(currentClass)
+							|| currentClass.getEAllSuperTypes().stream()
+									.anyMatch(sup -> r.getEReferenceType().equals(sup))
+							|| getAllSubTypes(currentClass, classes).stream()
+									.anyMatch(sub -> r.getEReferenceType().equals(sub) || sub.getEAllSuperTypes()
+											.stream().anyMatch(sup -> r.getEReferenceType().equals(sup))))))) {
 				LinkedList<EObject> result = new LinkedList<EObject>();
 				result.add(currentClass);
 				results.add(result);
