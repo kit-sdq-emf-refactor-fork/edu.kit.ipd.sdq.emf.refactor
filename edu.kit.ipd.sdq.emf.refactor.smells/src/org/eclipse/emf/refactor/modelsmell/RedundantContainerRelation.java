@@ -10,7 +10,9 @@ import org.eclipse.emf.refactor.smells.interfaces.IModelSmellFinder;
 
 import edu.kit.ipd.sdq.emf.refactor.smells.util.DetectionHelper;
 
-public final class RedundantContainerRelation implements IModelSmellFinder {
+public class RedundantContainerRelation implements IModelSmellFinder {
+
+    protected ContainerRelationType wantedType = ContainerRelationType.normal;
 
     @Override
     public LinkedList<LinkedList<EObject>> findSmell(EObject root) {
@@ -26,26 +28,20 @@ public final class RedundantContainerRelation implements IModelSmellFinder {
     private void findRedundantContainerRelations(EClass currentClass, LinkedList<LinkedList<EObject>> results) {
         for (EReference reference : currentClass.getEReferences()) {
             if (reference.isContainer()) {
-                LinkedList<EObject> result = new LinkedList<EObject>();
-                result.add(currentClass);
-                result.add(reference.getEType());
-                results.add(result);
+
+                boolean isSmellOccurrence = (wantedType == ContainerRelationType.normal && reference.getLowerBound() == 0)
+                        || (wantedType == ContainerRelationType.obligatory && reference.getLowerBound() == 1);
+                if (isSmellOccurrence) {
+                    LinkedList<EObject> result = new LinkedList<EObject>();
+                    result.add(currentClass);
+                    result.add(reference.getEType());
+                    results.add(result);
+                }
             }
         }
     }
 
-//    private boolean hasRedundantContainerRelation(EClass currentClass)
-//	{
-//		for(EReference reference : currentClass.getEReferences())
-//		{
-//			if(reference.isContainment())
-//			{
-//				if(reference.getEOpposite() != null)
-//				{
-//					return true;
-//				}
-//			}
-//		}
-//		return false;
-//	}
+    protected static enum ContainerRelationType {
+        normal, obligatory;
+    }
 }
