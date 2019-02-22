@@ -10,7 +10,7 @@ import org.eclipse.emf.refactor.smells.interfaces.IModelSmellFinder;
 
 import edu.kit.ipd.sdq.emf.refactor.smells.util.DetectionHelper;
 
-public class RedundantContainerRelation implements IModelSmellFinder {
+public class ContainerRelation implements IModelSmellFinder {
 
     protected ContainerRelationType wantedType = ContainerRelationType.normal;
 

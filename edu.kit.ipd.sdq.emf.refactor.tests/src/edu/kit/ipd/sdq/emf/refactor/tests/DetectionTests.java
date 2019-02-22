@@ -319,7 +319,7 @@ public class DetectionTests {
 		
 		EcoreBuilder.savePackageToFile(testPackage, "RedundantContainerRelation.ecore");
 		
-		Result result = SmellFinder.findSmell(new RedundantContainerRelation(), testPackage);
+		Result result = SmellFinder.findSmell(new ContainerRelation(), testPackage);
 		assertNotNull(result);
 		assertEquals(1, result.getModelelements().size());
 	}
