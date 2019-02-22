@@ -7,35 +7,35 @@ import java.util.LinkedHashSet;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EPackage;
 
-public class EClassSet extends LinkedHashSet<EClass> {
+public class EClassLinkedSet extends LinkedHashSet<EClass> {
 
     private static final long serialVersionUID = 6141321221905984295L;
 
     private final boolean forgiving;
 
-    public EClassSet() {
+    public EClassLinkedSet() {
         this(false);
     }
 
-    public EClassSet(int size) {
+    public EClassLinkedSet(int size) {
         this(size, false);
     }
 
-    public EClassSet(Collection<? extends EClass> otherSet) {
+    public EClassLinkedSet(Collection<? extends EClass> otherSet) {
         this(otherSet, false);
     }
 
-    public EClassSet(boolean forgiving) {
+    public EClassLinkedSet(boolean forgiving) {
         super();
         this.forgiving = forgiving;
     }
 
-    public EClassSet(int size, boolean forgiving) {
+    public EClassLinkedSet(int size, boolean forgiving) {
         super(size);
         this.forgiving = forgiving;
     }
 
-    public EClassSet(Collection<? extends EClass> otherSet, boolean forgiving) {
+    public EClassLinkedSet(Collection<? extends EClass> otherSet, boolean forgiving) {
         super(otherSet);
         this.forgiving = forgiving;
     }
@@ -139,7 +139,7 @@ public class EClassSet extends LinkedHashSet<EClass> {
      * 
      * @param otherSet
      */
-    public void inject(EClassSet otherSet) {
+    public void inject(EClassLinkedSet otherSet) {
         EClass last = null;
         Iterator<EClass> iterator = iterator();
         while (iterator.hasNext())

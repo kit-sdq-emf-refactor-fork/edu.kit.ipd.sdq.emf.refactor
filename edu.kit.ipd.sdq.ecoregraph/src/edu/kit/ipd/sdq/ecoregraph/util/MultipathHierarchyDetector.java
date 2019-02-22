@@ -23,11 +23,11 @@ import edu.kit.ipd.sdq.ecoregraph.EcoreGraph;
  *
  */
 public class MultipathHierarchyDetector {
-    private List<EClassSet> multipaths;
+    private List<EClassLinkedSet> multipaths;
     private EcoreGraph eGraph;
 
     public MultipathHierarchyDetector(EcoreGraph eGraph) {
-        this.multipaths = new LinkedList<EClassSet>();
+        this.multipaths = new LinkedList<EClassLinkedSet>();
         this.eGraph = eGraph;
     }
 
@@ -66,7 +66,7 @@ public class MultipathHierarchyDetector {
     private void findAllPaths(EClass startVertex, EClass destination, AsSubgraph<EClassifier, DefaultEdge> hierarchySubGraph, Stack<EClass> path) {
         path.push(startVertex);
         if (startVertex == destination) { // path found
-            this.multipaths.add(new EClassSet(path));
+            this.multipaths.add(new EClassLinkedSet(path));
         } else {
             Set<DefaultEdge> outgoingEdges = hierarchySubGraph.outgoingEdgesOf(startVertex);
             Set<EClass> neighbors = outgoingEdges.stream().map(e -> (EClass) hierarchySubGraph.getEdgeTarget(e)).collect(Collectors.toSet());
@@ -77,7 +77,7 @@ public class MultipathHierarchyDetector {
         path.pop();
     }
 
-    public List<EClassSet> getMultipaths() {
+    public List<EClassLinkedSet> getMultipaths() {
         return multipaths;
     }
 
@@ -107,13 +107,13 @@ public class MultipathHierarchyDetector {
             // iterate all multipaths
             int i = 0;
             while (i < multipaths.size()) {
-                EClassSet ithPath = multipaths.get(i);
+                EClassLinkedSet ithPath = multipaths.get(i);
 
                 // iterate all other multipaths
                 int j = i + 1;
                 while (j < multipaths.size()) {
 
-                    EClassSet jthPath = multipaths.get(j);
+                    EClassLinkedSet jthPath = multipaths.get(j);
 
                     // do paths share same start and end?
                     if (samePathStart(ithPath, jthPath) && samePathEnd(ithPath, jthPath)) {
@@ -144,13 +144,13 @@ public class MultipathHierarchyDetector {
         } while (resultChanged);
     }
 
-    private boolean samePathStart(EClassSet ithPath, EClassSet jthPath) {
+    private boolean samePathStart(EClassLinkedSet ithPath, EClassLinkedSet jthPath) {
         EClass startClass1 = ithPath.iterator().next();
         EClass startClass2 = jthPath.iterator().next();
         return EcoreHelper.equals(startClass1, startClass2);
     }
 
-    private boolean samePathEnd(EClassSet ithPath, EClassSet jthPath) {
+    private boolean samePathEnd(EClassLinkedSet ithPath, EClassLinkedSet jthPath) {
         EClass endClass1 = ithPath.getLast();
         EClass endClass2 = jthPath.getLast();
         return EcoreHelper.equals(endClass1, endClass2);
