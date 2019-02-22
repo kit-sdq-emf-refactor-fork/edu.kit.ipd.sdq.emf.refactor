@@ -14,28 +14,29 @@ import edu.kit.ipd.sdq.ecoregraph.util.MultipathHierarchyDetector;
 
 /**
  * This class detects if the same EClass inherits from the same EClass over different paths.
+ * 
  * @author renehahn
  * @author Amine Kechaou
  *
  */
 public final class MultipathHierarchy implements IModelSmellFinder {
 
-	@Override
-	public LinkedList<LinkedList<EObject>> findSmell(EObject root) {
-		LinkedList<LinkedList<EObject>> results = new LinkedList<>();
-		
-		//EPackage ePackage = (EPackage) root;
-		//EcoreGraph eGraph = EcoreGraphRegistry.INSTANCE.getEcoreGraph(ePackage);
-		
-		EcoreGraph graph = ModelSmellFinder.ecoreGraph;
-		MultipathHierarchyDetector detector = new MultipathHierarchyDetector(graph);
-		
-		Collection<Set<EClass>> multipaths = detector.groupMultipaths();
-		for (Set<EClass> path : multipaths) {
-			results.add(new LinkedList<EObject>(path));
-		}
-		
-		
-		return results;
-	}
+    @Override
+    public LinkedList<LinkedList<EObject>> findSmell(EObject root) {
+        LinkedList<LinkedList<EObject>> results = new LinkedList<>();
+
+        //EPackage ePackage = (EPackage) root;
+        //EcoreGraph eGraph = EcoreGraphRegistry.INSTANCE.getEcoreGraph(ePackage);
+
+        EcoreGraph graph = ModelSmellFinder.ecoreGraph;
+        MultipathHierarchyDetector detector = new MultipathHierarchyDetector(graph);
+
+        detector.findMultipathHierarchies();
+        Collection<Set<EClass>> multipaths = detector.groupMultipaths();
+        for (Set<EClass> path : multipaths) {
+            results.add(new LinkedList<EObject>(path));
+        }
+
+        return results;
+    }
 }
