@@ -107,16 +107,13 @@ public class MultipathHierarchyDetector {
             // iterate all multipaths
             int i = 0;
             while (i < multipaths.size()) {
-                EClassSet ithPath = new EClassSet(multipaths.get(i));
-
-                // this set will contain all classes that are involved in all multipaths that share start and end class
-//                EClassSet currentGroup = new EClassSet(ithPath);
+                EClassSet ithPath = multipaths.get(i);
 
                 // iterate all other multipaths
                 int j = i + 1;
                 while (j < multipaths.size()) {
 
-                    EClassSet jthPath = new EClassSet(multipaths.get(j));
+                    EClassSet jthPath = multipaths.get(j);
 
                     // do paths share same start and end?
 //                    if (samePathStart(ithPath, jthPath) && samePathEnd(ithPath, jthPath)) {
