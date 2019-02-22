@@ -1,12 +1,13 @@
 package edu.kit.ipd.sdq.ecoregraph.util;
 
 import java.util.Collection;
-import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
 
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EPackage;
 
-public class EClassSet extends HashSet<EClass> {
+public class EClassSet extends LinkedHashSet<EClass> {
 
     private static final long serialVersionUID = 6141321221905984295L;
 
@@ -122,5 +123,13 @@ public class EClassSet extends HashSet<EClass> {
 
         // identical namespace -> check rest of package hierarhcy
         return isPackageHierarchyIdentical(ePackage1.getESuperPackage(), ePackage2.getESuperPackage());
+    }
+
+    public EClass getLast() {
+        EClass last = null;
+        Iterator<EClass> iterator = iterator();
+        while (iterator.hasNext())
+            last = iterator.next();
+        return last;
     }
 }

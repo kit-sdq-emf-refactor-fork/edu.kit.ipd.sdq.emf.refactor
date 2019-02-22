@@ -102,47 +102,104 @@ public class MultipathHierarchyDetector {
 
     public Collection<Set<EClass>> groupMultipaths() {
         Collection<Set<EClass>> groupedMultipaths = new LinkedList<Set<EClass>>();
+        boolean resultChanged;
+        do {
+            resultChanged = false;
 
-        // iterate all multipaths
-        int i = 0;
-        while (i < multipaths.size()) {
-            List<EClass> ithPath = multipaths.get(i);
+            // iterate all multipaths
+            int i = 0;
+            while (i < multipaths.size()) {
+                EClassSet ithPath = new EClassSet(multipaths.get(i));
 
-            // this set will contain all classes that are involved in all multipaths that share start and end class
-            EClassSet currentGroup = new EClassSet(ithPath);
+                // this set will contain all classes that are involved in all multipaths that share start and end class
+//                EClassSet currentGroup = new EClassSet(ithPath);
 
-            // iterate all other mulitpaths
-            int j = i + 1;
-            while (j < multipaths.size()) {
+                // iterate all other multipaths
+                int j = i + 1;
+                while (j < multipaths.size()) {
 
-                List<EClass> jthPath = multipaths.get(j);
+                    EClassSet jthPath = new EClassSet(multipaths.get(j));
 
-                // do paths share same start and end?
-                if (samePathStart(ithPath, jthPath) && samePathEnd(ithPath, jthPath)) {
+                    // do paths share same start and end?
+//                    if (samePathStart(ithPath, jthPath) && samePathEnd(ithPath, jthPath)) {
 
-                    //consolidate
-                    currentGroup.addAll(multipaths.get(j));
-                    multipaths.remove(j);
-                } else {
-                    j++;
+//                        System.out.println("consolidating (same start/end)" + print(ithPath, jthPath));
+
+                    // might not be meaningful
+                    // consolidate
+//                        currentGroup.addAll(jthPath);
+//                        multipaths.remove(j);
+//                        resultChanged = true;
+//                    } else if (isSuperSet(ithPath, jthPath)) {
+
+                    if (isSuperSet(ithPath, jthPath)) {
+
+//                        System.out.println("consolidating (is superpath)" + print(ithPath, jthPath));
+                        // the other path is completely contained in the current path
+                        multipaths.remove(j);
+                        resultChanged = true;
+                    } else if (isSuperSet(jthPath, ithPath)) {
+
+//                        System.out.println("consolidating (is subpath)" + print(ithPath, jthPath));
+                        // the other path completely contains this path
+                        currentGroup.addAll(jthPath);
+                        ithPath = jthPath;
+                        multipaths.remove(j);
+                        resultChanged = true;
+                    } else {
+//                        System.out.println("not consolidating " + print(ithPath, jthPath));
+                        j++;
+                    }
                 }
-            }
 
-            groupedMultipaths.add(currentGroup);
-            i++;
-        }
+                groupedMultipaths.add(currentGroup);
+                i++;
+            }
+        } while (resultChanged);
+
         return groupedMultipaths;
     }
 
-    private boolean samePathStart(List<EClass> ithPath, List<EClass> jthPath) {
-        EClass startClass1 = ithPath.get(0);
-        EClass startClass2 = jthPath.get(0);
+    private boolean isSuperSet(EClassSet ithPath, EClassSet jthPath) {
+        return ithPath.containsAll(jthPath);
+
+//        for (EClass classFromSubSet : jthPath) {
+//            boolean inSuperSet = classContained(ithPath, classFromSubSet);
+//            if (!inSuperSet) {
+//                // class from subset is not in superset
+//                // => no superset relation! 
+//                return false;
+//            }
+//        }
+//
+//        // all classes of the subset are in the superset
+//        return true;
+    }
+
+    private boolean classContained(List<EClass> superSet, EClass classFromSubSet) {
+        for (EClass classFromSuperSet : superSet) {
+            if (EcoreHelper.equals(classFromSuperSet, classFromSubSet)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private String print(List<EClass> ithPath, List<EClass> jthPath) {
+        String classNameList1 = ithPath.stream().map(c -> c.getName()).collect(Collectors.joining(","));
+        String classNameList2 = jthPath.stream().map(c -> c.getName()).collect(Collectors.joining(","));
+        return classNameList1 + " <-> " + classNameList2;
+    }
+
+    private boolean samePathStart(EClassSet ithPath, EClassSet jthPath) {
+        EClass startClass1 = ithPath.iterator().next();
+        EClass startClass2 = jthPath.iterator().next();
         return EcoreHelper.equals(startClass1, startClass2);
     }
 
-    private boolean samePathEnd(List<EClass> ithPath, List<EClass> jthPath) {
-        EClass endClass1 = ithPath.get(ithPath.size() - 1);
-        EClass endClass2 = jthPath.get(jthPath.size() - 1);
+    private boolean samePathEnd(EClassSet ithPath, EClassSet jthPath) {
+        EClass endClass1 = ithPath.getLast();
+        EClass endClass2 = jthPath.getLast();
         return EcoreHelper.equals(endClass1, endClass2);
     }
 }
