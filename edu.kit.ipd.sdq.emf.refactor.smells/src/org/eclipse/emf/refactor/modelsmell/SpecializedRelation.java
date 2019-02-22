@@ -49,11 +49,15 @@ public final class SpecializedRelation implements IModelSmellFinder {
                     EClass localReferenceTarget = localReference.getEReferenceType();
                     if (inheritedReferenceTarget.isSuperTypeOf(localReferenceTarget) && !inheritedReferenceTarget.equals(localReferenceTarget)) {
 
-                        // occurrence found
-                        LinkedList<EObject> result = new LinkedList<EObject>();
-                        result.add(currentClass);
-                        result.add(localReferenceTarget);
-                        results.add(result);
+                        //ignore derived references
+                        if (!(localReference.isDerived() && localReference.isTransient())) {
+
+                            // occurrence found
+                            LinkedList<EObject> result = new LinkedList<EObject>();
+                            result.add(currentClass);
+                            result.add(localReferenceTarget);
+                            results.add(result);
+                        }
                     }
                 }
             }
