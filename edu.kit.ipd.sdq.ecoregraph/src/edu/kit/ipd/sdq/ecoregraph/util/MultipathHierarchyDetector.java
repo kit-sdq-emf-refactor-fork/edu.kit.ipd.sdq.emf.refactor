@@ -116,33 +116,25 @@ public class MultipathHierarchyDetector {
                     EClassSet jthPath = multipaths.get(j);
 
                     // do paths share same start and end?
-//                    if (samePathStart(ithPath, jthPath) && samePathEnd(ithPath, jthPath)) {
+                    if (samePathStart(ithPath, jthPath) && samePathEnd(ithPath, jthPath)) {
 
-//                        System.out.println("consolidating (same start/end)" + print(ithPath, jthPath));
+                        // consolidate
+                        ithPath.inject(jthPath);
+                        multipaths.remove(j);
+                        resultChanged = true;
+                    } else if (isSuperSet(ithPath, jthPath)) {
 
-                    // might not be meaningful
-                    // consolidate
-//                        currentGroup.addAll(jthPath);
-//                        multipaths.remove(j);
-//                        resultChanged = true;
-//                    } else if (isSuperSet(ithPath, jthPath)) {
-
-                    if (isSuperSet(ithPath, jthPath)) {
-
-//                        System.out.println("consolidating (is superpath)" + print(ithPath, jthPath));
                         // the other path is completely contained in the current path
                         multipaths.remove(j);
                         resultChanged = true;
                     } else if (isSuperSet(jthPath, ithPath)) {
 
-//                        System.out.println("consolidating (is subpath)" + print(ithPath, jthPath));
                         // the other path completely contains this path
                         ithPath.clear();
                         ithPath.addAll(jthPath);
                         multipaths.remove(j);
                         resultChanged = true;
                     } else {
-//                        System.out.println("not consolidating " + print(ithPath, jthPath));
                         j++;
                     }
                 }
@@ -154,18 +146,6 @@ public class MultipathHierarchyDetector {
 
     private boolean isSuperSet(EClassSet ithPath, EClassSet jthPath) {
         return ithPath.containsAll(jthPath);
-
-//        for (EClass classFromSubSet : jthPath) {
-//            boolean inSuperSet = classContained(ithPath, classFromSubSet);
-//            if (!inSuperSet) {
-//                // class from subset is not in superset
-//                // => no superset relation! 
-//                return false;
-//            }
-//        }
-//
-//        // all classes of the subset are in the superset
-//        return true;
     }
 
     private boolean classContained(List<EClass> superSet, EClass classFromSubSet) {

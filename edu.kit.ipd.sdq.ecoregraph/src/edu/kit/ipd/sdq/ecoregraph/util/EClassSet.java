@@ -132,4 +132,19 @@ public class EClassSet extends LinkedHashSet<EClass> {
             last = iterator.next();
         return last;
     }
+
+    /**
+     * Adds the content of otherSet to this set. Ensures that the last element stays at the end of
+     * the list.
+     * 
+     * @param otherSet
+     */
+    public void inject(EClassSet otherSet) {
+        EClass last = null;
+        Iterator<EClass> iterator = iterator();
+        while (iterator.hasNext())
+            last = iterator.next();
+        iterator.remove();
+        addAll(otherSet);
+    }
 }
