@@ -24,7 +24,7 @@ public final class SpecializedRelation implements IModelSmellFinder {
 
     @Override
     public LinkedList<LinkedList<EObject>> findSmell(EObject root) {
-        LinkedList<LinkedList<EObject>> results = new LinkedList<LinkedList<EObject>>();
+        LinkedList<LinkedList<EObject>> results = new LinkedList<>();
         List<EClass> classes = DetectionHelper.getAllEClasses(root);
         for (EClass currentClass : classes) {
             findClassSpecializationAggregation(currentClass, results);
@@ -53,7 +53,7 @@ public final class SpecializedRelation implements IModelSmellFinder {
                         if (!(localReference.isDerived() && localReference.isTransient())) {
 
                             // occurrence found
-                            LinkedList<EObject> result = new LinkedList<EObject>();
+                            LinkedList<EObject> result = new LinkedList<>();
                             result.add(currentClass);
                             result.add(localReferenceTarget);
                             results.add(result);

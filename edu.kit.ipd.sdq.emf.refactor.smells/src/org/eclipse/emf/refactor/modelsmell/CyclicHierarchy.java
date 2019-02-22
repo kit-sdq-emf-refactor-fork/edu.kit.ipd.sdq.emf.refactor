@@ -3,7 +3,6 @@ package org.eclipse.emf.refactor.modelsmell;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
@@ -20,14 +19,14 @@ public final class CyclicHierarchy implements IModelSmellFinder {
 
 	@Override
 	public LinkedList<LinkedList<EObject>> findSmell(EObject root) {
-		LinkedList<LinkedList<EObject>> results = new LinkedList<LinkedList<EObject>>();
+		LinkedList<LinkedList<EObject>> results = new LinkedList<>();
 		List<EClass> classes = DetectionHelper.getAllEClasses(root);
 		
 		for(EClass currentClass : classes)
 		{
 			if(hasClassACyclicHierarchy(currentClass))
 			{
-				LinkedList<EObject> result = new LinkedList<EObject>();
+				LinkedList<EObject> result = new LinkedList<>();
 				result.add(currentClass);
 				results.add(result);
 			}

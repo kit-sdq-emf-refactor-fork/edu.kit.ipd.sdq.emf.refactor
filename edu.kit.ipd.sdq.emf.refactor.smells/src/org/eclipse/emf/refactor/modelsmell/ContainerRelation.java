@@ -16,7 +16,7 @@ public class ContainerRelation implements IModelSmellFinder {
 
     @Override
     public LinkedList<LinkedList<EObject>> findSmell(EObject root) {
-        LinkedList<LinkedList<EObject>> results = new LinkedList<LinkedList<EObject>>();
+        LinkedList<LinkedList<EObject>> results = new LinkedList<>();
         List<EClass> classes = DetectionHelper.getAllEClasses(root);
         for (EClass currentClass : classes) {
             findRedundantContainerRelations(currentClass, results);
@@ -29,10 +29,10 @@ public class ContainerRelation implements IModelSmellFinder {
         for (EReference reference : currentClass.getEReferences()) {
             if (reference.isContainer()) {
 
-                boolean isSmellOccurrence = (wantedType == ContainerRelationType.normal && reference.getLowerBound() == 0)
-                        || (wantedType == ContainerRelationType.obligatory && reference.getLowerBound() == 1);
+                boolean isSmellOccurrence = wantedType == ContainerRelationType.normal && reference.getLowerBound() == 0
+                        || wantedType == ContainerRelationType.obligatory && reference.getLowerBound() == 1;
                 if (isSmellOccurrence) {
-                    LinkedList<EObject> result = new LinkedList<EObject>();
+                    LinkedList<EObject> result = new LinkedList<>();
                     result.add(currentClass);
                     result.add(reference.getEType());
                     results.add(result);

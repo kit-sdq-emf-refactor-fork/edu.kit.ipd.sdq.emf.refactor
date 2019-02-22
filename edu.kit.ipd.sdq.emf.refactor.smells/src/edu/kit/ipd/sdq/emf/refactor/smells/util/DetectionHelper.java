@@ -11,7 +11,7 @@ import org.eclipse.emf.ecore.EObject;
 public class DetectionHelper 
 {
 	public static List<EClass> getAllEClasses(EObject root) {
-		List<EClass> classes = new ArrayList<EClass>();
+		List<EClass> classes = new ArrayList<>();
 		TreeIterator<EObject> iter = root.eAllContents();
 		while (iter.hasNext()) {
 			EObject eObject = iter.next();
@@ -24,7 +24,7 @@ public class DetectionHelper
 	}
 	
 	public static List<EClass> getAllESuperclasses(EClass cl) {
-		List<EClass> superclasses = new ArrayList<EClass>();
+		List<EClass> superclasses = new ArrayList<>();
 		if (cl.getESuperTypes().isEmpty()) return superclasses;
 		superclasses.addAll(cl.getESuperTypes());
 		for (EClass superclass : cl.getESuperTypes()) {
@@ -34,7 +34,7 @@ public class DetectionHelper
 	}
 	
 	public static List<EEnum> getAllEEnums(EObject root) {
-		List<EEnum> enums = new ArrayList<EEnum>();
+		List<EEnum> enums = new ArrayList<>();
 		TreeIterator<EObject> iter = root.eAllContents();
 		while (iter.hasNext()) {
 			EObject eObject = iter.next();

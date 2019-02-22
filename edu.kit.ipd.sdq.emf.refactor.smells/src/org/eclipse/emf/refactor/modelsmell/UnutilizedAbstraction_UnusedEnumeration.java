@@ -7,7 +7,6 @@ import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EEnum;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.refactor.smells.interfaces.IModelSmellFinder;
 
 import edu.kit.ipd.sdq.emf.refactor.smells.util.DetectionHelper;
@@ -21,14 +20,14 @@ public final class UnutilizedAbstraction_UnusedEnumeration implements IModelSmel
 
 	@Override
 	public LinkedList<LinkedList<EObject>> findSmell(EObject root) {
-		LinkedList<LinkedList<EObject>> results = new LinkedList<LinkedList<EObject>>();
+		LinkedList<LinkedList<EObject>> results = new LinkedList<>();
 		List<EEnum> enums = DetectionHelper.getAllEEnums(root);
 		List<EClass> classes = DetectionHelper.getAllEClasses(root);
 		for(EEnum currentEnum : enums)
 		{
 			if(!isUsedAsType(currentEnum, classes))
 			{
-				LinkedList<EObject> result = new LinkedList<EObject>();
+				LinkedList<EObject> result = new LinkedList<>();
 				result.add(currentEnum);
 				results.add(result);
 			}

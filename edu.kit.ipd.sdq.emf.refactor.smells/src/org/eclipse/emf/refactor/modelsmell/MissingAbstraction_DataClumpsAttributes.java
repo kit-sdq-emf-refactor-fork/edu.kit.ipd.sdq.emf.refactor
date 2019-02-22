@@ -2,6 +2,7 @@ package org.eclipse.emf.refactor.modelsmell;
 
 import java.util.LinkedList;
 import java.util.List;
+
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.refactor.metrics.core.Metric;
 import org.eclipse.emf.refactor.metrics.interfaces.IMetricCalculator;
@@ -19,27 +20,27 @@ public final class MissingAbstraction_DataClumpsAttributes extends MetricBasedMo
 	
 	@Override
 	public LinkedList<LinkedList<EObject>> findSmell(EObject root) {
-		LinkedList<EObject> rootList = new LinkedList<EObject>();
+		LinkedList<EObject> rootList = new LinkedList<>();
 		rootList.add(root);
 		IMetricCalculator localCalculateClass = localMetric.getCalculateClass();
-		double globalLimit = this.getLimit();
+		double globalLimit = getLimit();
 		return findSmellyObjectGroups(root, globalLimit, localCalculateClass);
 	}
 	
 	private LinkedList<LinkedList<EObject>> findSmellyObjectGroups(EObject object, double globalLimit, 
 				IMetricCalculator localCalculateClass) {
 		String context = localMetric.getContext();
-		LinkedList<LinkedList<EObject>> smellyEObjects = new LinkedList<LinkedList<EObject>>();		
+		LinkedList<LinkedList<EObject>> smellyEObjects = new LinkedList<>();		
 		String objectType = object.eClass().getInstanceClass().getSimpleName();
 		if(objectType.equals(context)) {
-			LinkedList<EObject> rootList = new LinkedList<EObject>();
+			LinkedList<EObject> rootList = new LinkedList<>();
 			rootList.add(object);
 			localCalculateClass.setContext(rootList);
 			double localValue = localCalculateClass.calculate();
 			if (limitReached(localValue, globalLimit)) {
-				LinkedList<EObject> currentObjects = new LinkedList<EObject>();
+				LinkedList<EObject> currentObjects = new LinkedList<>();
 				currentObjects.add(object);
-				smellyEObjects.add((currentObjects));
+				smellyEObjects.add(currentObjects);
 			}
 		} else {
 			List<EObject> containedEObjects = object.eContents();
@@ -51,6 +52,6 @@ public final class MissingAbstraction_DataClumpsAttributes extends MetricBasedMo
 	}
 	
 	private boolean limitReached(double localValue, double globalLimit) {
-		return (localValue >= globalLimit);
+		return localValue >= globalLimit;
 	}	
 }

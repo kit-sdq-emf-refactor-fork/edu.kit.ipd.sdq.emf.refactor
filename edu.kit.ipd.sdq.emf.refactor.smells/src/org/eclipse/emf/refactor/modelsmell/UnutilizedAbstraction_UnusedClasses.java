@@ -20,7 +20,7 @@ public final class UnutilizedAbstraction_UnusedClasses implements IModelSmellFin
 
 	@Override
 	public LinkedList<LinkedList<EObject>> findSmell(EObject root) {
-		LinkedList<LinkedList<EObject>> results = new LinkedList<LinkedList<EObject>>();
+		LinkedList<LinkedList<EObject>> results = new LinkedList<>();
 
 		List<EClass> classes = DetectionHelper.getAllEClasses(root);
 		for (EClass currentClass : classes) {
@@ -31,7 +31,7 @@ public final class UnutilizedAbstraction_UnusedClasses implements IModelSmellFin
 							|| getAllSubTypes(currentClass, classes).stream()
 									.anyMatch(sub -> r.getEReferenceType().equals(sub) || sub.getEAllSuperTypes()
 											.stream().anyMatch(sup -> r.getEReferenceType().equals(sup))))))) {
-				LinkedList<EObject> result = new LinkedList<EObject>();
+				LinkedList<EObject> result = new LinkedList<>();
 				result.add(currentClass);
 				results.add(result);
 			}
@@ -42,7 +42,7 @@ public final class UnutilizedAbstraction_UnusedClasses implements IModelSmellFin
 	}
 
 	List<EClass> getAllSubTypes(EClass superClass, List<EClass> classes) {
-		List<EClass> result = new ArrayList<EClass>();
+		List<EClass> result = new ArrayList<>();
 		for (EClass c : classes) {
 			if (c.getEAllSuperTypes().contains(superClass)) {
 				result.add(c);
