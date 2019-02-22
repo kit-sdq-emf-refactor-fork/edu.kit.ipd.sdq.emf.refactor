@@ -1,7 +1,6 @@
 package edu.kit.ipd.sdq.ecoregraph.util;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -24,11 +23,11 @@ import edu.kit.ipd.sdq.ecoregraph.EcoreGraph;
  *
  */
 public class MultipathHierarchyDetector {
-    private List<List<EClass>> multipaths;
+    private List<EClassSet> multipaths;
     private EcoreGraph eGraph;
 
     public MultipathHierarchyDetector(EcoreGraph eGraph) {
-        this.multipaths = new LinkedList<List<EClass>>();
+        this.multipaths = new LinkedList<EClassSet>();
         this.eGraph = eGraph;
     }
 
@@ -67,7 +66,7 @@ public class MultipathHierarchyDetector {
     private void findAllPaths(EClass startVertex, EClass destination, AsSubgraph<EClassifier, DefaultEdge> hierarchySubGraph, Stack<EClass> path) {
         path.push(startVertex);
         if (startVertex == destination) { // path found
-            this.multipaths.add(new LinkedList<EClass>(path));
+            this.multipaths.add(new EClassSet(path));
         } else {
             Set<DefaultEdge> outgoingEdges = hierarchySubGraph.outgoingEdgesOf(startVertex);
             Set<EClass> neighbors = outgoingEdges.stream().map(e -> (EClass) hierarchySubGraph.getEdgeTarget(e)).collect(Collectors.toSet());
@@ -78,7 +77,7 @@ public class MultipathHierarchyDetector {
         path.pop();
     }
 
-    public List<List<EClass>> getMultipaths() {
+    public List<EClassSet> getMultipaths() {
         return multipaths;
     }
 
@@ -100,8 +99,7 @@ public class MultipathHierarchyDetector {
 //        return groupedMultipaths;
 //    }
 
-    public Collection<Set<EClass>> groupMultipaths() {
-        Collection<Set<EClass>> groupedMultipaths = new LinkedList<Set<EClass>>();
+    public void groupMultipaths() {
         boolean resultChanged;
         do {
             resultChanged = false;
@@ -142,8 +140,7 @@ public class MultipathHierarchyDetector {
 
 //                        System.out.println("consolidating (is subpath)" + print(ithPath, jthPath));
                         // the other path completely contains this path
-                        currentGroup.addAll(jthPath);
-                        ithPath = jthPath;
+                        ithPath.addAll(jthPath);
                         multipaths.remove(j);
                         resultChanged = true;
                     } else {
@@ -152,12 +149,9 @@ public class MultipathHierarchyDetector {
                     }
                 }
 
-                groupedMultipaths.add(currentGroup);
                 i++;
             }
         } while (resultChanged);
-
-        return groupedMultipaths;
     }
 
     private boolean isSuperSet(EClassSet ithPath, EClassSet jthPath) {
