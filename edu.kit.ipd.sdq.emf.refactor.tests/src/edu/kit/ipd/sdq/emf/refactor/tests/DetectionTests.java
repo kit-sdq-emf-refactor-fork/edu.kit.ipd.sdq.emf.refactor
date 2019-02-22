@@ -372,7 +372,7 @@ public class DetectionTests {
 		
 		EcoreBuilder.savePackageToFile(testPackage, "SpecializationAggregation1.ecore");
 		
-		Result result = SmellFinder.findSmell(new SpecializationAggregation(), testPackage);
+		Result result = SmellFinder.findSmell(new SpecializedRelation(), testPackage);
 		assertNotNull(result);
 		assertEquals(1, result.getModelelements().size());
 	}
@@ -402,7 +402,7 @@ public class DetectionTests {
 		
 		EcoreBuilder.savePackageToFile(testPackage, "SpecializationAggregation2.ecore");
 		
-		Result result = SmellFinder.findSmell(new SpecializationAggregation(), testPackage);
+		Result result = SmellFinder.findSmell(new SpecializedRelation(), testPackage);
 		assertNotNull(result);
 		assertEquals(1, result.getModelelements().size());
 	}
@@ -429,7 +429,7 @@ public class DetectionTests {
 		
 		EcoreBuilder.addReference(firstClass, "testReference", secondClass, false, 0, 1);
 		
-		Result result = SmellFinder.findSmell(new SpecializationAggregation(), testPackage);
+		Result result = SmellFinder.findSmell(new SpecializedRelation(), testPackage);
 		assertNotNull(result);
 		assertEquals(0, result.getModelelements().size());
 	}

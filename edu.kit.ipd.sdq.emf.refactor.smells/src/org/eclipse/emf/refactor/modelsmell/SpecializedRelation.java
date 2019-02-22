@@ -15,7 +15,7 @@ import edu.kit.ipd.sdq.emf.refactor.smells.util.DetectionHelper;
  * @author renehahn
  *
  */
-public final class SpecializationAggregation implements IModelSmellFinder {
+public final class SpecializedRelation implements IModelSmellFinder {
 
 	@Override
 	public LinkedList<LinkedList<EObject>> findSmell(EObject root) {
