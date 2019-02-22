@@ -122,12 +122,12 @@ public class MultipathHierarchyDetector {
                         ithPath.inject(jthPath);
                         multipaths.remove(j);
                         resultChanged = true;
-                    } else if (isSuperSet(ithPath, jthPath)) {
+                    } else if (ithPath.containsAll(jthPath)) {
 
                         // the other path is completely contained in the current path
                         multipaths.remove(j);
                         resultChanged = true;
-                    } else if (isSuperSet(jthPath, ithPath)) {
+                    } else if (jthPath.containsAll(ithPath)) {
 
                         // the other path completely contains this path
                         ithPath.clear();
@@ -142,25 +142,6 @@ public class MultipathHierarchyDetector {
                 i++;
             }
         } while (resultChanged);
-    }
-
-    private boolean isSuperSet(EClassSet ithPath, EClassSet jthPath) {
-        return ithPath.containsAll(jthPath);
-    }
-
-    private boolean classContained(List<EClass> superSet, EClass classFromSubSet) {
-        for (EClass classFromSuperSet : superSet) {
-            if (EcoreHelper.equals(classFromSuperSet, classFromSubSet)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private String print(List<EClass> ithPath, List<EClass> jthPath) {
-        String classNameList1 = ithPath.stream().map(c -> c.getName()).collect(Collectors.joining(","));
-        String classNameList2 = jthPath.stream().map(c -> c.getName()).collect(Collectors.joining(","));
-        return classNameList1 + " <-> " + classNameList2;
     }
 
     private boolean samePathStart(EClassSet ithPath, EClassSet jthPath) {
