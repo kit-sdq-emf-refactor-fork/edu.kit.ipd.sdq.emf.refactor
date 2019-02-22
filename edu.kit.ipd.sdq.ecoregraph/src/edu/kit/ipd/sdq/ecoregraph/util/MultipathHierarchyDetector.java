@@ -137,6 +137,7 @@ public class MultipathHierarchyDetector {
 
 //                        System.out.println("consolidating (is subpath)" + print(ithPath, jthPath));
                         // the other path completely contains this path
+                        ithPath.clear();
                         ithPath.addAll(jthPath);
                         multipaths.remove(j);
                         resultChanged = true;
