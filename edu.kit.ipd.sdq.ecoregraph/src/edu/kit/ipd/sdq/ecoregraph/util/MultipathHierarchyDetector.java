@@ -33,23 +33,32 @@ public class MultipathHierarchyDetector {
 
     public void findMultipathHierarchies() {
         AsSubgraph<EClassifier, DefaultEdge> hierarchySubGraph = EcoreGraphUtil.hierarchySubGraph(eGraph);
-        Set<EClass> startVertices = hierarchySubGraph.vertexSet().stream().filter(c -> hierarchySubGraph.outDegreeOf(c) >= 2).map(c -> (EClass) c).collect(Collectors.toSet());
 
+        // begin search at classes that have more than 1 direct superclass
+        Set<EClass> startVertices = hierarchySubGraph.vertexSet().stream().filter(c -> hierarchySubGraph.outDegreeOf(c) >= 2).map(c -> (EClass) c).collect(Collectors.toSet());
         for (EClass startVertex : startVertices) {
             List<EClass> superTypes = startVertex.getESuperTypes();
             Set<EClass> destinations = new HashSet<EClass>();
+
+            // iterate superclasses
             for (EClass superType : superTypes) {
                 List<EClass> otherSuperTypes = new ArrayList<EClass>();
                 otherSuperTypes.addAll(superTypes);
                 otherSuperTypes.remove(superType);
 
+                // superclasses of this superclass are potential candidates
                 Set<EClass> potentialCandidates = new HashSet<EClass>();
                 potentialCandidates.addAll(superType.getEAllSuperTypes());
                 potentialCandidates.add(superType);
 
+                // iterate other superclasses
                 for (EClass otherSuperType : otherSuperTypes) {
                     List<EClass> allOtherSuperSuperTypes = otherSuperType.getEAllSuperTypes();
+
+                    // iterate candidates
                     for (EClass potentialCandidate : potentialCandidates) {
+
+                        // candidate is multipath destination if it is also a superclass of another superclass
                         if (allOtherSuperSuperTypes.contains(potentialCandidate)) {
                             destinations.add(potentialCandidate);
                         }
@@ -61,6 +70,8 @@ public class MultipathHierarchyDetector {
                 findAllPaths(startVertex, destination, hierarchySubGraph, new Stack<EClass>());
             }
         }
+
+        groupMultipaths();
     }
 
     private void findAllPaths(EClass startVertex, EClass destination, AsSubgraph<EClassifier, DefaultEdge> hierarchySubGraph, Stack<EClass> path) {
@@ -99,7 +110,7 @@ public class MultipathHierarchyDetector {
 //        return groupedMultipaths;
 //    }
 
-    public void groupMultipaths() {
+    private void groupMultipaths() {
         boolean resultChanged;
         do {
             resultChanged = false;

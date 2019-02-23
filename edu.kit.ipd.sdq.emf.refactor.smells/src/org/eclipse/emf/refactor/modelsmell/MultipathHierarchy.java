@@ -31,7 +31,6 @@ public final class MultipathHierarchy implements IModelSmellFinder {
         MultipathHierarchyDetector detector = new MultipathHierarchyDetector(graph);
 
         detector.findMultipathHierarchies();
-        detector.groupMultipaths();
         Collection<EClassLinkedSet> multipaths = detector.getMultipaths();
         for (EClassLinkedSet path : multipaths) {
             results.add(new LinkedList<EObject>(path));
