@@ -71,6 +71,7 @@ public class MultipathHierarchyDetector {
             }
         }
 
+        removeLinearPathEnds();
         groupMultipaths();
     }
 
@@ -88,8 +89,27 @@ public class MultipathHierarchyDetector {
         path.pop();
     }
 
-    public List<EClassLinkedSet> getMultipaths() {
-        return multipaths;
+    private void removeLinearPathEnds() {
+        // find paths with same start and end
+        for (EClassLinkedSet path : multipaths) {
+
+            // list holds all paths with same start and end
+            List<EClassLinkedSet> similarPaths = new ArrayList<EClassLinkedSet>();
+
+            // iterate all other paths
+            for (EClassLinkedSet otherPath : multipaths) {
+                if (path == otherPath) {
+                    continue;
+                }
+
+                if (samePathStart(path, otherPath) && samePathEnd(path, otherPath)) {
+                    similarPaths.add(otherPath);
+                }
+            }
+
+            // check whether destination path is linear
+            //TODO
+        }
     }
 
 //    //Former version (from Amine?)
@@ -156,14 +176,14 @@ public class MultipathHierarchyDetector {
     }
 
     private boolean samePathStart(EClassLinkedSet ithPath, EClassLinkedSet jthPath) {
-        EClass startClass1 = ithPath.iterator().next();
-        EClass startClass2 = jthPath.iterator().next();
-        return EcoreHelper.equals(startClass1, startClass2);
+        return EcoreHelper.equals(ithPath.getFirst(), jthPath.getFirst());
     }
 
     private boolean samePathEnd(EClassLinkedSet ithPath, EClassLinkedSet jthPath) {
-        EClass endClass1 = ithPath.getLast();
-        EClass endClass2 = jthPath.getLast();
-        return EcoreHelper.equals(endClass1, endClass2);
+        return EcoreHelper.equals(ithPath.getLast(), jthPath.getLast());
+    }
+
+    public List<EClassLinkedSet> getMultipaths() {
+        return multipaths;
     }
 }

@@ -125,6 +125,10 @@ public class EClassLinkedSet extends LinkedHashSet<EClass> {
         return isPackageHierarchyIdentical(ePackage1.getESuperPackage(), ePackage2.getESuperPackage());
     }
 
+    public EClass getFirst() {
+        return iterator().next();
+    }
+
     public EClass getLast() {
         EClass last = null;
         Iterator<EClass> iterator = iterator();
