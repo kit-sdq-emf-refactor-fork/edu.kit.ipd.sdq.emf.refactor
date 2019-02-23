@@ -71,7 +71,7 @@ public class MultipathHierarchyDetector {
             }
         }
 
-        removeLinearPathEnds();
+        removeLinearPathEnds(hierarchySubGraph);
         groupMultipaths();
     }
 
@@ -89,29 +89,86 @@ public class MultipathHierarchyDetector {
         path.pop();
     }
 
-    private void removeLinearPathEnds() {
+    private void removeLinearPathEnds(AsSubgraph<EClassifier, DefaultEdge> hierarchySubGraph) {
         // find paths with same start and end
         for (EClassLinkedSet path : multipaths) {
 
-            EClass detination = path.getLast();
+            EClass destination = path.getLast();
 
             // list holds all paths with same start and end
-            List<EClassLinkedSet> similarPaths = new ArrayList<EClassLinkedSet>();
+            List<EClassLinkedSet> similarPaths = findPathsWithSameStartAndDestination(path, destination);
 
-            // iterate all other paths
-            for (EClassLinkedSet otherPath : multipaths) {
-                if (path == otherPath) {
-                    continue;
+            // try to trim until there is no more change 
+            boolean pathChanged;
+            do {
+                pathChanged = false;
+
+                ensureDestinationIsInheritanceSink(path, destination);
+
+                // check whether destination path is linear
+                Set<DefaultEdge> incomingEdgesToDestination = hierarchySubGraph.incomingEdgesOf(destination);
+                Set<EClass> subclassesOfDestination = incomingEdgesToDestination.stream().map(e -> (EClass) hierarchySubGraph.getEdgeSource(e)).collect(Collectors.toSet());
+                int widthOfLastSegment = 0;
+
+                // for each subclass of the destination
+                for (EClass destinationSubClass : subclassesOfDestination) {
+
+                    // check wether it is part of a path
+                    if (partOfSomePath(destinationSubClass))
+                        widthOfLastSegment++;
                 }
 
-                if (samePathStart(path, otherPath) && samePathDestination(detination, otherPath)) {
-                    similarPaths.add(otherPath);
+                // is the destination only reachable trough one inheritance?
+                if (widthOfLastSegment == 1) {
+
+                    // for each of the similar paths
+                    for (EClassLinkedSet similarPath : similarPaths) {
+
+                        // trim destination
+                        similarPath.remove(destination);
+                    }
+
+                    // update destination
+                    destination = path.getLast();
+
+                    pathChanged = true;
                 }
+
+            } while (pathChanged);
+        }
+    }
+
+    private void ensureDestinationIsInheritanceSink(EClassLinkedSet path, EClass destination) {
+        for (EClass destinationSuperClass : destination.getEAllSuperTypes()) {
+            if (path.contains(destinationSuperClass)) {
+                throw new RuntimeException("This is not a multipath destination!");
+            }
+        }
+    }
+
+    private boolean partOfSomePath(EClass destinationSubClass) {
+        for (EClassLinkedSet otherPath : multipaths) {
+            if (otherPath.contains(destinationSubClass)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private List<EClassLinkedSet> findPathsWithSameStartAndDestination(EClassLinkedSet path, EClass detination) {
+        List<EClassLinkedSet> similarPaths = new ArrayList<EClassLinkedSet>();
+        similarPaths.add(path);
+
+        for (EClassLinkedSet otherPath : multipaths) {
+            if (path == otherPath) {
+                continue;
             }
 
-            // check whether destination path is linear
-            //TODO
+            if (samePathStart(path, otherPath) && samePathDestination(detination, otherPath)) {
+                similarPaths.add(otherPath);
+            }
         }
+        return similarPaths;
     }
 
 //    //Former version (from Amine?)
