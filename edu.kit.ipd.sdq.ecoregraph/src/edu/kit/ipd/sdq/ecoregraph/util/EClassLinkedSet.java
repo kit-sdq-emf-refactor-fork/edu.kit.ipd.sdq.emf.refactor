@@ -140,10 +140,9 @@ public class EClassLinkedSet extends LinkedHashSet<EClass> {
      * @param otherSet
      */
     public void inject(EClassLinkedSet otherSet) {
-        EClass last = null;
         Iterator<EClass> iterator = iterator();
         while (iterator.hasNext())
-            last = iterator.next();
+            iterator.next();
         iterator.remove();
         addAll(otherSet);
     }
