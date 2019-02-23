@@ -93,6 +93,8 @@ public class MultipathHierarchyDetector {
         // find paths with same start and end
         for (EClassLinkedSet path : multipaths) {
 
+            EClass detination = path.getLast();
+
             // list holds all paths with same start and end
             List<EClassLinkedSet> similarPaths = new ArrayList<EClassLinkedSet>();
 
@@ -102,7 +104,7 @@ public class MultipathHierarchyDetector {
                     continue;
                 }
 
-                if (samePathStart(path, otherPath) && samePathEnd(path, otherPath)) {
+                if (samePathStart(path, otherPath) && samePathDestination(detination, otherPath)) {
                     similarPaths.add(otherPath);
                 }
             }
@@ -139,6 +141,7 @@ public class MultipathHierarchyDetector {
             int i = 0;
             while (i < multipaths.size()) {
                 EClassLinkedSet ithPath = multipaths.get(i);
+                EClass ithDestination = ithPath.getLast();
 
                 // iterate all other multipaths
                 int j = i + 1;
@@ -147,7 +150,7 @@ public class MultipathHierarchyDetector {
                     EClassLinkedSet jthPath = multipaths.get(j);
 
                     // do paths share same start and end?
-                    if (samePathStart(ithPath, jthPath) && samePathEnd(ithPath, jthPath)) {
+                    if (samePathStart(ithPath, jthPath) && samePathDestination(ithDestination, jthPath)) {
 
                         // consolidate
                         ithPath.inject(jthPath);
@@ -175,12 +178,12 @@ public class MultipathHierarchyDetector {
         } while (resultChanged);
     }
 
-    private boolean samePathStart(EClassLinkedSet ithPath, EClassLinkedSet jthPath) {
-        return EcoreHelper.equals(ithPath.getFirst(), jthPath.getFirst());
+    private boolean samePathStart(EClassLinkedSet path, EClassLinkedSet otherPath) {
+        return EcoreHelper.equals(path.getFirst(), otherPath.getFirst());
     }
 
-    private boolean samePathEnd(EClassLinkedSet ithPath, EClassLinkedSet jthPath) {
-        return EcoreHelper.equals(ithPath.getLast(), jthPath.getLast());
+    private boolean samePathDestination(EClass ithDestination, EClassLinkedSet otherPath) {
+        return EcoreHelper.equals(ithDestination, otherPath.getLast());
     }
 
     public List<EClassLinkedSet> getMultipaths() {
