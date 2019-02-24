@@ -3,6 +3,7 @@ package edu.kit.ipd.sdq.ecoregraph.util;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
+import java.util.stream.Collectors;
 
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EPackage;
@@ -149,5 +150,10 @@ public class EClassLinkedSet extends LinkedHashSet<EClass> {
             iterator.next();
         iterator.remove();
         addAll(otherSet);
+    }
+
+    @Override
+    public String toString() {
+        return stream().map(c -> c.getName()).collect(Collectors.joining(",", "(", ")"));
     }
 }
