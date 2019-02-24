@@ -8,6 +8,7 @@ import java.util.Set;
 import java.util.Stack;
 import java.util.stream.Collectors;
 
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EClassifier;
 import org.jgrapht.graph.AsSubgraph;
@@ -71,7 +72,7 @@ public class MultipathHierarchyDetector {
             }
         }
 
-        removeLinearPathEnds(hierarchySubGraph);
+        trimPaths(hierarchySubGraph);
         groupMultipaths();
     }
 
@@ -89,11 +90,12 @@ public class MultipathHierarchyDetector {
         path.pop();
     }
 
-    private void removeLinearPathEnds(AsSubgraph<EClassifier, DefaultEdge> hierarchySubGraph) {
+    private void trimPaths(AsSubgraph<EClassifier, DefaultEdge> hierarchySubGraph) {
         // find paths with same start and end
         for (EClassLinkedSet path : multipaths) {
 
             EClass destination = path.getLast();
+            EClass start = path.getFirst();
 
             // list holds all paths with same start and end
             List<EClassLinkedSet> similarPaths = findPathsWithSameStartAndDestination(path, destination);
@@ -104,50 +106,104 @@ public class MultipathHierarchyDetector {
                 pathChanged = false;
 
                 ensureDestinationIsInheritanceSink(path, destination);
+                ensureStartIsInheritanceSource(path, start);
 
-                // check whether destination path is linear
-                Set<DefaultEdge> incomingEdgesToDestination = hierarchySubGraph.incomingEdgesOf(destination);
-                Set<EClass> subclassesOfDestination = incomingEdgesToDestination.stream().map(e -> (EClass) hierarchySubGraph.getEdgeSource(e)).collect(Collectors.toSet());
-                int widthOfLastSegment = 0;
-
-                // for each subclass of the destination
-                for (EClass destinationSubClass : subclassesOfDestination) {
-
-                    // check wether it is part of a path
-                    if (partOfSomePath(destinationSubClass))
-                        widthOfLastSegment++;
-                }
-
-                // is the destination only reachable trough one inheritance?
-                if (widthOfLastSegment == 1) {
-
-                    // for each of the similar paths
-                    for (EClassLinkedSet similarPath : similarPaths) {
-
-                        // trim destination
-                        similarPath.remove(destination);
-                    }
-
+                pathChanged = trimPathDestination(similarPaths, destination, hierarchySubGraph);
+                if (pathChanged) {
                     // update destination
                     destination = path.getLast();
+                    break;
+                }
 
-                    pathChanged = true;
+                pathChanged = trimPathStart(similarPaths, start, hierarchySubGraph);
+                if (pathChanged) {
+                    // update destination
+                    start = path.getFirst();
+                    break;
                 }
 
             } while (pathChanged);
         }
     }
 
-    private void ensureDestinationIsInheritanceSink(EClassLinkedSet path, EClass destination) {
-        for (EClass destinationSuperClass : destination.getEAllSuperTypes()) {
-            if (path.contains(destinationSuperClass)) {
-                throw new RuntimeException("This is not a multipath destination!");
+    private boolean trimPathStart(List<EClassLinkedSet> paths, EClass start, AsSubgraph<EClassifier, DefaultEdge> hierarchySubGraph) {
+        // is path start linear?
+        int superClassesInPath = getWidthOfFirstPathSegment(start, paths);
+        if (superClassesInPath == 1) {
+
+            // for each of the similar paths
+            for (EClassLinkedSet similarPath : paths) {
+
+                // trim start
+                similarPath.remove(start);
+            }
+
+            return true;
+        }
+        return false;
+    }
+
+    private int getWidthOfFirstPathSegment(EClass start, List<EClassLinkedSet> paths) {
+        int superClassesInPath;
+        superClassesInPath = 0;
+        EList<EClass> superClasses = start.getESuperTypes();
+        for (EClass superClass : superClasses) {
+            if (partOfSomePath(superClass, paths)) {
+                superClassesInPath++;
+            }
+        }
+        return superClassesInPath;
+    }
+
+    private boolean trimPathDestination(List<EClassLinkedSet> paths, EClass destination, AsSubgraph<EClassifier, DefaultEdge> hierarchySubGraph) {
+        // check whether destination path is linear
+        Set<DefaultEdge> incomingEdgesToDestination = hierarchySubGraph.incomingEdgesOf(destination);
+        Set<EClass> subclassesOfDestination = incomingEdgesToDestination.stream().map(e -> (EClass) hierarchySubGraph.getEdgeSource(e)).collect(Collectors.toSet());
+        int widthOfLastSegment = 0;
+
+        // for each subclass of the destination
+        for (EClass destinationSubClass : subclassesOfDestination) {
+
+            // check wether it is part of a path
+//            if (partOfSomePath(destinationSubClass))
+            if (partOfSomePath(destinationSubClass, paths))
+                widthOfLastSegment++;
+        }
+
+        // is the destination only reachable trough one inheritance?
+        if (widthOfLastSegment == 1) {
+
+            // for each of the similar paths
+            for (EClassLinkedSet similarPath : paths) {
+
+                // trim destination
+                similarPath.remove(destination);
+            }
+
+            return true;
+        }
+        return false;
+    }
+
+    private void ensureStartIsInheritanceSource(EClassLinkedSet path, EClass first) {
+        for (EClass eClass : path) {
+            if (eClass != first && first.isSuperTypeOf(eClass)) {
+                throw new RuntimeException("This is not a multipath start! It has incoming inheritances from the path.");
             }
         }
     }
 
-    private boolean partOfSomePath(EClass destinationSubClass) {
-        for (EClassLinkedSet otherPath : multipaths) {
+    private void ensureDestinationIsInheritanceSink(EClassLinkedSet path, EClass destination) {
+        for (EClass destinationSuperClass : destination.getEAllSuperTypes()) {
+            if (path.contains(destinationSuperClass)) {
+                throw new RuntimeException("This is not a multipath destination! It has outgoing inheritances into the path.");
+            }
+        }
+    }
+
+    private boolean partOfSomePath(EClass destinationSubClass, List<EClassLinkedSet> paths) {
+//        for (EClassLinkedSet otherPath : multipaths) {
+        for (EClassLinkedSet otherPath : paths) {
             if (otherPath.contains(destinationSubClass)) {
                 return true;
             }
