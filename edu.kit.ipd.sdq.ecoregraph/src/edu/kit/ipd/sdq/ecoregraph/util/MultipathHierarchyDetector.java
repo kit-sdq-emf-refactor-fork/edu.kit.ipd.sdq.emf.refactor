@@ -68,23 +68,49 @@ public class MultipathHierarchyDetector {
             }
 
             for (EClass destination : destinations) {
-                findAllPaths(startVertex, destination, hierarchySubGraph, new Stack<EClass>());
+                multipaths = findAllPaths(startVertex, destination, hierarchySubGraph);
             }
         }
 
         trimPaths(hierarchySubGraph);
         groupMultipaths();
+        splitMergedMultipaths(hierarchySubGraph);
     }
 
-    private void findAllPaths(EClass startVertex, EClass destination, AsSubgraph<EClassifier, DefaultEdge> hierarchySubGraph, Stack<EClass> path) {
+    private void splitMergedMultipaths(AsSubgraph<EClassifier, DefaultEdge> hierarchySubGraph) {
+        // iterate all paths
+        for (EClassLinkedSet path : multipaths) {
+
+            EClass start = path.getFirst();
+            EClass destination = path.getLast();
+
+            // iterate all classes in the path
+            for (EClass eClass : path) {
+                //TODO
+            }
+        }
+
+        // is there a path from start to destination that does not include the class?
+        // do this by depth first search
+        // no => the class is not part of a multiplath, and the path has to be split
+
+    }
+
+    private List<EClassLinkedSet> findAllPaths(EClass startVertex, EClass destination, AsSubgraph<EClassifier, DefaultEdge> hierarchySubGraph) {
+        List<EClassLinkedSet> allPaths = new ArrayList<EClassLinkedSet>();
+        findAllPaths(startVertex, destination, hierarchySubGraph, new Stack<EClass>(), allPaths);
+        return allPaths;
+    }
+
+    private void findAllPaths(EClass startVertex, EClass destination, AsSubgraph<EClassifier, DefaultEdge> hierarchySubGraph, Stack<EClass> path, List<EClassLinkedSet> allPaths) {
         path.push(startVertex);
         if (startVertex == destination) { // path found
-            this.multipaths.add(new EClassLinkedSet(path));
+            allPaths.add(new EClassLinkedSet(path));
         } else {
             Set<DefaultEdge> outgoingEdges = hierarchySubGraph.outgoingEdgesOf(startVertex);
             Set<EClass> neighbors = outgoingEdges.stream().map(e -> (EClass) hierarchySubGraph.getEdgeTarget(e)).collect(Collectors.toSet());
             for (EClass neighbor : neighbors) {
-                findAllPaths(neighbor, destination, hierarchySubGraph, path);
+                findAllPaths(neighbor, destination, hierarchySubGraph, path, allPaths);
             }
         }
         path.pop();
