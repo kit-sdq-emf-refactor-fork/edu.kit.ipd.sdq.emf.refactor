@@ -112,14 +112,13 @@ public class MultipathHierarchyDetector {
                 if (pathChanged) {
                     // update destination
                     destination = path.getLast();
-                    break;
+                    continue;
                 }
 
                 pathChanged = trimPathStart(similarPaths, start, hierarchySubGraph);
                 if (pathChanged) {
                     // update destination
                     start = path.getFirst();
-                    break;
                 }
 
             } while (pathChanged);
@@ -133,6 +132,8 @@ public class MultipathHierarchyDetector {
 
             // for each of the similar paths
             for (EClassLinkedSet similarPath : paths) {
+
+                System.out.println("Trimming start of: " + similarPath);
 
                 // trim start
                 similarPath.remove(start);
@@ -175,6 +176,8 @@ public class MultipathHierarchyDetector {
 
             // for each of the similar paths
             for (EClassLinkedSet similarPath : paths) {
+
+                System.out.println("Trimming destination of: " + similarPath);
 
                 // trim destination
                 similarPath.remove(destination);
