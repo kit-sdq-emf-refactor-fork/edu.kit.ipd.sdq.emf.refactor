@@ -5,5 +5,6 @@
 <metric id="org.eclipse.emf.refactor.metrics.naptc" metric_calculate_class="org.eclipse.emf.refactor.metrics.NAPTC" metric_context="EClass" metric_description="Number of EAttributes within the class being of primitive type" metric_metamodel="http://www.eclipse.org/emf/2002/Ecore" metric_name="NAPTC"/>
 <metric id="org.eclipse.emf.refactor.metrics.nidtc" metric_calculate_class="org.eclipse.emf.refactor.metrics.NIDTC" metric_context="EClass" metric_description="Number of incoming dependencies from classes" metric_metamodel="http://www.eclipse.org/emf/2002/Ecore" metric_name="NIDTC"/>
 <metric id="org.eclipse.emf.refactor.metrics.nodtc" metric_calculate_class="org.eclipse.emf.refactor.metrics.NODTC" metric_context="EClass" metric_description="Number of outgoing dependencies to EClasses" metric_metamodel="http://www.eclipse.org/emf/2002/Ecore" metric_name="NODTC"/>
+<metric id="org.eclipse.emf.refactor.metrics.npc"   metric_calculate_class="org.eclipse.emf.refactor.metrics.NPC"   metric_context="EClass" metric_description="Number of properties of class. A property is an attribute, inheritance, reference, or operation." metric_metamodel="http://www.eclipse.org/emf/2002/Ecore" metric_name="NPC"/>
 </extension>
 </plugin>
