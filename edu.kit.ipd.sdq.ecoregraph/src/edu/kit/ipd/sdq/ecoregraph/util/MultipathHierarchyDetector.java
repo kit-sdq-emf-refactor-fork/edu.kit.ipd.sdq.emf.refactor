@@ -5,7 +5,6 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
-import java.util.Stack;
 import java.util.stream.Collectors;
 
 import org.eclipse.emf.common.util.EList;
@@ -68,7 +67,7 @@ public class MultipathHierarchyDetector {
             }
 
             for (EClass destination : destinations) {
-                multipaths.addAll(findAllPaths(startVertex, destination, hierarchySubGraph));
+                multipaths.addAll(EcoreGraphUtil.findAllPaths(startVertex, destination, hierarchySubGraph));
             }
         }
 
@@ -98,7 +97,7 @@ public class MultipathHierarchyDetector {
         // determine all paths from start to destination
         EClass start = multiPath.getFirst();
         EClass destination = multiPath.getLast();
-        List<EClassLinkedSet> allPaths = findAllPaths(start, destination, hierarchySubGraph);
+        List<EClassLinkedSet> allPaths = EcoreGraphUtil.findAllPaths(start, destination, hierarchySubGraph);
 
         // iterate all classes in the path
         for (EClass potentialBottleneckClass : multiPath) {
@@ -179,26 +178,6 @@ public class MultipathHierarchyDetector {
             }
         }
         return containedInPaths;
-    }
-
-    private List<EClassLinkedSet> findAllPaths(EClass start, EClass destination, AsSubgraph<EClassifier, DefaultEdge> hierarchySubGraph) {
-        List<EClassLinkedSet> allPaths = new ArrayList<EClassLinkedSet>();
-        findAllPaths(start, destination, hierarchySubGraph, new Stack<EClass>(), allPaths);
-        return allPaths;
-    }
-
-    private void findAllPaths(EClass start, EClass destination, AsSubgraph<EClassifier, DefaultEdge> hierarchySubGraph, Stack<EClass> path, List<EClassLinkedSet> allPaths) {
-        path.push(start);
-        if (start == destination) { // path found
-            allPaths.add(new EClassLinkedSet(path));
-        } else {
-            Set<DefaultEdge> outgoingEdges = hierarchySubGraph.outgoingEdgesOf(start);
-            Set<EClass> neighbors = outgoingEdges.stream().map(e -> (EClass) hierarchySubGraph.getEdgeTarget(e)).collect(Collectors.toSet());
-            for (EClass neighbor : neighbors) {
-                findAllPaths(neighbor, destination, hierarchySubGraph, path, allPaths);
-            }
-        }
-        path.pop();
     }
 
     // this is no longer necessary, as the split also trims the paths
