@@ -72,9 +72,9 @@ public class MultipathHierarchyDetector {
             }
         }
 
-        trimPaths(hierarchySubGraph);
-        groupMultipaths();
+//        trimPaths(hierarchySubGraph);
         splitMergedMultipaths(hierarchySubGraph);
+        groupMultipaths();
     }
 
     private void splitMergedMultipaths(AsSubgraph<EClassifier, DefaultEdge> hierarchySubGraph) {
