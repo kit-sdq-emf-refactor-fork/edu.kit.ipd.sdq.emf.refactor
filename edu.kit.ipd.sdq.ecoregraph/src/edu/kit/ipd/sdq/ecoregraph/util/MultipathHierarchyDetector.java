@@ -72,7 +72,6 @@ public class MultipathHierarchyDetector {
             }
         }
 
-//        trimPaths(hierarchySubGraph);
         splitMergedMultipaths(hierarchySubGraph);
         groupMultipaths();
     }
@@ -202,6 +201,8 @@ public class MultipathHierarchyDetector {
         path.pop();
     }
 
+    // this is no longer necessary, as the split also trims the paths
+    @SuppressWarnings("unused")
     private void trimPaths(AsSubgraph<EClassifier, DefaultEdge> hierarchySubGraph) {
         // find paths with same start and end
         for (EClassLinkedSet path : multipaths) {
@@ -316,8 +317,6 @@ public class MultipathHierarchyDetector {
     }
 
     private boolean partOfSomePath(EClass eClass, List<EClassLinkedSet> paths) {
-//        return occursInHowManyPaths(eClass, paths) > 0;
-
         for (EClassLinkedSet otherPath : paths) {
             if (otherPath.contains(eClass)) {
                 return true;
