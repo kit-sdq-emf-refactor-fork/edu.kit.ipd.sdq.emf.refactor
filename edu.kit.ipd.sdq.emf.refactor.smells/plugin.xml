@@ -18,5 +18,11 @@
 		-->
 		<modelsmell id="org.eclipse.emf.refactor.modelsmell.lateHierarchy" modelsmell_finderclass="org.eclipse.emf.refactor.modelsmell.ConcreteAbstractClass" modelsmell_metamodel="http://www.eclipse.org/emf/2002/Ecore" modelsmell_name="Concrete Abstract Class"/>
 		<modelsmell id="org.eclipse.emf.refactor.modelsmell.cyclicDependentModularization" modelsmell_finderclass="org.eclipse.emf.refactor.modelsmell.CyclicDependentModularization" modelsmell_metamodel="http://www.eclipse.org/emf/2002/Ecore" modelsmell_name="Dependency Cycle"/>
+		<modelsmell
+        id="org.eclipse.emf.refactor.modelsmell.godclass"
+        modelsmell_description="A class that has too many properties."
+        modelsmell_finderclass="org.eclipse.emf.refactor.modelsmell.godclass"
+        modelsmell_metamodel="http://www.eclipse.org/emf/2002/Ecore"
+        modelsmell_name="God Class"/>
 </extension>
 </plugin>
