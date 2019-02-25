@@ -14,7 +14,7 @@ import edu.kit.ipd.sdq.emf.refactor.smells.util.DetectionHelper;
  * @author renehahn
  *
  */
-public final class LateHierarchy implements IModelSmellFinder {
+public final class ConcreteAbstractClass implements IModelSmellFinder {
 
 	@Override
 	public LinkedList<LinkedList<EObject>> findSmell(EObject root) {

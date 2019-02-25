@@ -16,7 +16,7 @@
 		<modelsmell id="org.eclipse.emf.refactor.modelsmell.hubLikeModularization_IncomingDependencies" modelsmell_description="Hub-Like Modularization Incoming Dependencies" modelsmell_finderclass="org.eclipse.emf.refactor.modelsmell.HubLikeModularization_IncomingDependencies" modelsmell_metamodel="http://www.eclipse.org/emf/2002/Ecore" modelsmell_name="HubLikeModularization_IncomingDependencies"/>
 		<modelsmell id="org.eclipse.emf.refactor.modelsmell.hubLikeModularization" modelsmell_description="Hub-Like Modularization Outgoing Dependencies" modelsmell_finderclass="org.eclipse.emf.refactor.modelsmell.HubLikeModularization_OutgoingDependencies" modelsmell_metamodel="http://www.eclipse.org/emf/2002/Ecore" modelsmell_name="HubLikeModularization_OutgoingDependencies"/>
 		-->
-		<modelsmell id="org.eclipse.emf.refactor.modelsmell.lateHierarchy" modelsmell_finderclass="org.eclipse.emf.refactor.modelsmell.LateHierarchy" modelsmell_metamodel="http://www.eclipse.org/emf/2002/Ecore" modelsmell_name="Concrete Abstract Class"/>
+		<modelsmell id="org.eclipse.emf.refactor.modelsmell.lateHierarchy" modelsmell_finderclass="org.eclipse.emf.refactor.modelsmell.ConcreteAbstractClass" modelsmell_metamodel="http://www.eclipse.org/emf/2002/Ecore" modelsmell_name="Concrete Abstract Class"/>
 		<modelsmell id="org.eclipse.emf.refactor.modelsmell.cyclicDependentModularization" modelsmell_finderclass="org.eclipse.emf.refactor.modelsmell.CyclicDependentModularization" modelsmell_metamodel="http://www.eclipse.org/emf/2002/Ecore" modelsmell_name="Dependency Cycle"/>
 </extension>
 </plugin>

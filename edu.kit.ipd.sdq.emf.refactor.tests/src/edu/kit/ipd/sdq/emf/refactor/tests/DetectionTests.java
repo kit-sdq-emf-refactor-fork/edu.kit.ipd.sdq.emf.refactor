@@ -619,7 +619,7 @@ public class DetectionTests {
 		
 		EcoreBuilder.savePackageToFile(testPackage, "LateHierarchy.ecore");	
 		
-		Result result = SmellFinder.findSmell(new LateHierarchy(), testPackage);
+		Result result = SmellFinder.findSmell(new ConcreteAbstractClass(), testPackage);
 		assertNotNull(result);
 		assertEquals(1, result.getModelelements().size());
 	}
