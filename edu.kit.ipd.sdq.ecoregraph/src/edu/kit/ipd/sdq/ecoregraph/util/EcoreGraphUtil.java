@@ -79,5 +79,11 @@ public class EcoreGraphUtil {
     	}
     	System.out.println("---");    		
 	}
+
+    public static Set<EClass> getSubclasses(EClass eClass, AsSubgraph<EClassifier, DefaultEdge> hierarchyGraph) {
+        Set<DefaultEdge> incomingEdgesToDestination = hierarchyGraph.incomingEdgesOf(eClass);
+        Set<EClass> subclassesOfDestination = incomingEdgesToDestination.stream().map(e -> (EClass) hierarchyGraph.getEdgeSource(e)).collect(Collectors.toSet());
+        return subclassesOfDestination;
+    }
 	
 }
