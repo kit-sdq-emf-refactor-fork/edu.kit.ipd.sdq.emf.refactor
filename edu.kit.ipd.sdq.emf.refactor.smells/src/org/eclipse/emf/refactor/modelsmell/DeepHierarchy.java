@@ -3,10 +3,17 @@ package org.eclipse.emf.refactor.modelsmell;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.refactor.metrics.core.Metric;
-import org.eclipse.emf.refactor.metrics.interfaces.IMetricCalculator;
 import org.eclipse.emf.refactor.smells.core.MetricBasedModelSmellFinderClass;
+import org.eclipse.emf.refactor.smells.runtime.core.ModelSmellFinder;
+import org.jgrapht.graph.AsSubgraph;
+import org.jgrapht.graph.DefaultEdge;
+
+import edu.kit.ipd.sdq.ecoregraph.util.EClassLinkedSet;
+import edu.kit.ipd.sdq.ecoregraph.util.EcoreGraphUtil;
+import edu.kit.ipd.sdq.emf.refactor.smells.util.DetectionHelper;
 
 /**
  * Checks if a hierarchy is excessively deep
@@ -16,16 +23,34 @@ import org.eclipse.emf.refactor.smells.core.MetricBasedModelSmellFinderClass;
  */
 public final class DeepHierarchy extends MetricBasedModelSmellFinderClass {
 
-    private String metricId = "org.eclipse.emf.refactor.metrics.ecore.maxditec";
-    private Metric localMetric = Metric.getMetricInstanceFromId(metricId);
-
     @Override
     public LinkedList<LinkedList<EObject>> findSmell(EObject root) {
-        LinkedList<EObject> rootList = new LinkedList<>();
-        rootList.add(root);
-        IMetricCalculator localCalculateClass = localMetric.getCalculateClass();
+
+        AsSubgraph<EClassifier, DefaultEdge> hierarchyGraph = EcoreGraphUtil.hierarchySubGraph(ModelSmellFinder.ecoreGraph);
+        List<EClass> eClasses = DetectionHelper.getAllEClasses(root);
         double globalLimit = getLimit();
-        LinkedList<LinkedList<EObject>> deepHierarchies = findSmellyObjectGroups(root, globalLimit, localCalculateClass);
+
+        LinkedList<LinkedList<EObject>> deepHierarchies = new LinkedList<LinkedList<EObject>>();
+
+        // iterate all classes in metamodel
+        for (EClass eClass : eClasses) {
+
+            // iterate all superclasses
+            for (EClass superClass : eClass.getEAllSuperTypes()) {
+
+                // iterate all paths to superclasses
+                List<EClassLinkedSet> paths = EcoreGraphUtil.findAllPaths(eClass, superClass, hierarchyGraph);
+                for (EClassLinkedSet path : paths) {
+
+                    // if path exceeds limit
+                    if (path.size() >= globalLimit) {
+
+                        // add to results
+                        deepHierarchies.add(new LinkedList<EObject>(path));
+                    }
+                }
+            }
+        }
 
         removeSubsets(deepHierarchies);
 
@@ -55,32 +80,5 @@ public final class DeepHierarchy extends MetricBasedModelSmellFinderClass {
                 i++;
             }
         }
-    }
-
-    private LinkedList<LinkedList<EObject>> findSmellyObjectGroups(EObject object, double globalLimit, IMetricCalculator localCalculateClass) {
-        String context = localMetric.getContext();
-        LinkedList<LinkedList<EObject>> smellyEObjects = new LinkedList<>();
-        String objectType = object.eClass().getInstanceClass().getSimpleName();
-        if (objectType.equals(context)) {
-            LinkedList<EObject> rootList = new LinkedList<>();
-            rootList.add(object);
-            localCalculateClass.setContext(rootList);
-            double localValue = localCalculateClass.calculate();
-            if (limitReached(localValue, globalLimit)) {
-                LinkedList<EObject> currentObjects = new LinkedList<>();
-                currentObjects.add(object);
-                smellyEObjects.add(currentObjects);
-            }
-        } else {
-            List<EObject> containedEObjects = object.eContents();
-            for (EObject containedEObject : containedEObjects) {
-                smellyEObjects.addAll(findSmellyObjectGroups(containedEObject, globalLimit, localCalculateClass));
-            }
-        }
-        return smellyEObjects;
-    }
-
-    private boolean limitReached(double localValue, double globalLimit) {
-        return localValue >= globalLimit;
     }
 }
