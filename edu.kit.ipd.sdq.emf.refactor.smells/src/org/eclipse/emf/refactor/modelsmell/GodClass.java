@@ -46,7 +46,7 @@ public final class GodClass extends MetricBasedModelSmellFinderClass {
     }
 
     private boolean limitReached(double localValue, double globalLimit) {
-        return (localValue > globalLimit);
+        return (localValue >= globalLimit);
     }
 
 }
