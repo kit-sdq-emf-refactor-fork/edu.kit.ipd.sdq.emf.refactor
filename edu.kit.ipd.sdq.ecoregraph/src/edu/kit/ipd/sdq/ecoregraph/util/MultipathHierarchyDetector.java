@@ -68,7 +68,7 @@ public class MultipathHierarchyDetector {
             }
 
             for (EClass destination : destinations) {
-                multipaths = findAllPaths(startVertex, destination, hierarchySubGraph);
+                multipaths.addAll(findAllPaths(startVertex, destination, hierarchySubGraph));
             }
         }
 
@@ -111,7 +111,9 @@ public class MultipathHierarchyDetector {
             // is class a bottleneck? 
             int containedInPaths = occursInHowManyPaths(potentialBottleneckClass, allPaths);
             assert containedInPaths > 0;
-            if (containedInPaths == 1) {
+            if (containedInPaths == allPaths.size()) {
+
+                System.out.println("Found bottleneck class " + potentialBottleneckClass.getName() + " in multipath " + multiPath);
 
                 EClassLinkedSet lowerMultipath = new EClassLinkedSet();
                 EClassLinkedSet upperMultipath = new EClassLinkedSet();
