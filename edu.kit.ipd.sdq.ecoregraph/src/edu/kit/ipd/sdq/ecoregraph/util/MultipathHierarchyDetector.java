@@ -78,36 +78,61 @@ public class MultipathHierarchyDetector {
     }
 
     private void splitMergedMultipaths(AsSubgraph<EClassifier, DefaultEdge> hierarchySubGraph) {
-        // iterate all paths
-        for (EClassLinkedSet path : multipaths) {
+        // iterate all multipaths
+        for (EClassLinkedSet multiPath : multipaths) {
 
-            EClass start = path.getFirst();
-            EClass destination = path.getLast();
+            // determine all paths from start to destination
+            EClass start = multiPath.getFirst();
+            EClass destination = multiPath.getLast();
+            List<EClassLinkedSet> allPaths = findAllPaths(start, destination, hierarchySubGraph);
 
             // iterate all classes in the path
-            for (EClass eClass : path) {
-                //TODO
+            for (EClass eClass : multiPath) {
+
+                if (eClass == start || eClass == destination) {
+                    continue;
+                }
+
+                int containedInPaths = occursInHowManyPaths(eClass, allPaths);
+                assert containedInPaths > 0;
+
+                if (containedInPaths == 1) {
+                    // iterate all paths
+                    // iterate all classes in path
+                    // add class to new path
+                    // until bottleneck is found
+                    // continue with other path
+
+                    // remove old multipath
+                    // add new multipath
+                    // discard if multi path is one or two segments long 
+                }
             }
         }
-
-        // is there a path from start to destination that does not include the class?
-        // do this by depth first search
-        // no => the class is not part of a multiplath, and the path has to be split
-
     }
 
-    private List<EClassLinkedSet> findAllPaths(EClass startVertex, EClass destination, AsSubgraph<EClassifier, DefaultEdge> hierarchySubGraph) {
+    private int occursInHowManyPaths(EClass eClass, List<EClassLinkedSet> paths) {
+        int containedInPaths = 0;
+        for (EClassLinkedSet path : paths) {
+            if (path.contains(eClass)) {
+                containedInPaths++;
+            }
+        }
+        return containedInPaths;
+    }
+
+    private List<EClassLinkedSet> findAllPaths(EClass start, EClass destination, AsSubgraph<EClassifier, DefaultEdge> hierarchySubGraph) {
         List<EClassLinkedSet> allPaths = new ArrayList<EClassLinkedSet>();
-        findAllPaths(startVertex, destination, hierarchySubGraph, new Stack<EClass>(), allPaths);
+        findAllPaths(start, destination, hierarchySubGraph, new Stack<EClass>(), allPaths);
         return allPaths;
     }
 
-    private void findAllPaths(EClass startVertex, EClass destination, AsSubgraph<EClassifier, DefaultEdge> hierarchySubGraph, Stack<EClass> path, List<EClassLinkedSet> allPaths) {
-        path.push(startVertex);
-        if (startVertex == destination) { // path found
+    private void findAllPaths(EClass start, EClass destination, AsSubgraph<EClassifier, DefaultEdge> hierarchySubGraph, Stack<EClass> path, List<EClassLinkedSet> allPaths) {
+        path.push(start);
+        if (start == destination) { // path found
             allPaths.add(new EClassLinkedSet(path));
         } else {
-            Set<DefaultEdge> outgoingEdges = hierarchySubGraph.outgoingEdgesOf(startVertex);
+            Set<DefaultEdge> outgoingEdges = hierarchySubGraph.outgoingEdgesOf(start);
             Set<EClass> neighbors = outgoingEdges.stream().map(e -> (EClass) hierarchySubGraph.getEdgeTarget(e)).collect(Collectors.toSet());
             for (EClass neighbor : neighbors) {
                 findAllPaths(neighbor, destination, hierarchySubGraph, path, allPaths);
@@ -230,10 +255,11 @@ public class MultipathHierarchyDetector {
         }
     }
 
-    private boolean partOfSomePath(EClass destinationSubClass, List<EClassLinkedSet> paths) {
-//        for (EClassLinkedSet otherPath : multipaths) {
+    private boolean partOfSomePath(EClass eClass, List<EClassLinkedSet> paths) {
+//        return occursInHowManyPaths(eClass, paths) > 0;
+
         for (EClassLinkedSet otherPath : paths) {
-            if (otherPath.contains(destinationSubClass)) {
+            if (otherPath.contains(eClass)) {
                 return true;
             }
         }
