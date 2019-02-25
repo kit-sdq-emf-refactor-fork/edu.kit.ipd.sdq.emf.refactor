@@ -270,8 +270,7 @@ public class MultipathHierarchyDetector {
 
     private boolean trimPathDestination(List<EClassLinkedSet> paths, EClass destination, AsSubgraph<EClassifier, DefaultEdge> hierarchySubGraph) {
         // check whether destination path is linear
-        Set<DefaultEdge> incomingEdgesToDestination = hierarchySubGraph.incomingEdgesOf(destination);
-        Set<EClass> subclassesOfDestination = incomingEdgesToDestination.stream().map(e -> (EClass) hierarchySubGraph.getEdgeSource(e)).collect(Collectors.toSet());
+        Set<EClass> subclassesOfDestination = getSubclasses(destination, hierarchySubGraph);
         int widthOfLastSegment = 0;
 
         // for each subclass of the destination
@@ -298,6 +297,12 @@ public class MultipathHierarchyDetector {
             return true;
         }
         return false;
+    }
+
+    public static Set<EClass> getSubclasses(EClass eClass, AsSubgraph<EClassifier, DefaultEdge> hierarchyGraph) {
+        Set<DefaultEdge> incomingEdgesToDestination = hierarchyGraph.incomingEdgesOf(eClass);
+        Set<EClass> subclassesOfDestination = incomingEdgesToDestination.stream().map(e -> (EClass) hierarchyGraph.getEdgeSource(e)).collect(Collectors.toSet());
+        return subclassesOfDestination;
     }
 
     private void ensureStartIsInheritanceSource(EClassLinkedSet path, EClass first) {
