@@ -111,11 +111,11 @@ public class DetectionTests {
 		
 		EcoreBuilder.savePackageToFile(testPackage, "MissingAbstractionDataClumps.ecore");
 		
-		Result result = SmellFinder.findMetricSmellWithLimit(new MissingAbstraction_DataClumpsAttributes(), 2, testPackage);
+		Result result = SmellFinder.findMetricSmellWithLimit(new MissingClassSharedProperties(), 2, testPackage);
 		assertNotNull(result);
 		assertEquals(2,	result.getModelelements().size());
 		
-		result = SmellFinder.findMetricSmellWithLimit(new MissingAbstraction_DataClumpsAttributes(), 3, testPackage);
+		result = SmellFinder.findMetricSmellWithLimit(new MissingClassSharedProperties(), 3, testPackage);
 		assertNotNull(result);
 		assertEquals(0,	result.getModelelements().size());
 	}
@@ -139,11 +139,11 @@ public class DetectionTests {
 		
 		EcoreBuilder.savePackageToFile(testPackage, "MissingAbstractionPrimitiveObsessionPrimitiveTypes.ecore");
 		
-		Result result = SmellFinder.findMetricSmellWithLimit(new MissingAbstraction_PrimitiveObessionPrimitiveTypes(), 2, testPackage);
+		Result result = SmellFinder.findMetricSmellWithLimit(new MissingClassPrimitiveObession(), 2, testPackage);
 		assertNotNull(result);
 		assertEquals(2,	result.getModelelements().size());
 		
-		result = SmellFinder.findMetricSmellWithLimit(new MissingAbstraction_PrimitiveObessionPrimitiveTypes(), 3, testPackage);
+		result = SmellFinder.findMetricSmellWithLimit(new MissingClassPrimitiveObession(), 3, testPackage);
 		assertNotNull(result);
 		assertEquals(0,	result.getModelelements().size());
 	}

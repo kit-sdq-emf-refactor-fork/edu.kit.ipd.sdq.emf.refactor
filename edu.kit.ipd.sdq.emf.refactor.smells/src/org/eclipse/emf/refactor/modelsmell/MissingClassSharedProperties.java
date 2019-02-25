@@ -13,7 +13,7 @@ import org.eclipse.emf.refactor.smells.core.MetricBasedModelSmellFinderClass;
  * @author renehahn
  *
  */
-public final class MissingAbstraction_DataClumpsAttributes extends MetricBasedModelSmellFinderClass {
+public final class MissingClassSharedProperties extends MetricBasedModelSmellFinderClass {
 
 	private String metricId = "org.eclipse.emf.refactor.metrics.neatc";
 	private Metric localMetric = Metric.getMetricInstanceFromId(metricId);

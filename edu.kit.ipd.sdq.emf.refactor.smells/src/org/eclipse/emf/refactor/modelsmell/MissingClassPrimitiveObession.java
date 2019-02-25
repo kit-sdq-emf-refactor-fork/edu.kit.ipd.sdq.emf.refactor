@@ -13,7 +13,7 @@ import org.eclipse.emf.refactor.smells.core.MetricBasedModelSmellFinderClass;
  * @author renehahn
  *
  */
-public final class MissingAbstraction_PrimitiveObessionPrimitiveTypes extends MetricBasedModelSmellFinderClass {
+public final class MissingClassPrimitiveObession extends MetricBasedModelSmellFinderClass {
 
 	private String metricId = "org.eclipse.emf.refactor.metrics.naptc";
 	private Metric localMetric = Metric.getMetricInstanceFromId(metricId);
