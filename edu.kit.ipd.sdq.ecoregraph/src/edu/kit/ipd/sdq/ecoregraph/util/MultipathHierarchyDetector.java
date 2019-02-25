@@ -111,7 +111,7 @@ public class MultipathHierarchyDetector {
             assert containedInPaths > 0;
             if (containedInPaths == allPaths.size()) {
 
-                System.out.println("Found bottleneck class " + potentialBottleneckClass.getName() + " in multipath " + multiPath);
+//                System.out.println("Found bottleneck class " + potentialBottleneckClass.getName() + " in multipath " + multiPath);
 
                 EClassLinkedSet lowerMultipath = new EClassLinkedSet();
                 EClassLinkedSet upperMultipath = new EClassLinkedSet();
