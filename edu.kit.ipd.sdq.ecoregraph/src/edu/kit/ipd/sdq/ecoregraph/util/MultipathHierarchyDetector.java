@@ -78,37 +78,96 @@ public class MultipathHierarchyDetector {
     }
 
     private void splitMergedMultipaths(AsSubgraph<EClassifier, DefaultEdge> hierarchySubGraph) {
+
         // iterate all multipaths
-        for (EClassLinkedSet multiPath : multipaths) {
+        for (int i = 0; i < multipaths.size();) {
+            EClassLinkedSet multiPath = multipaths.get(i);
 
-            // determine all paths from start to destination
-            EClass start = multiPath.getFirst();
-            EClass destination = multiPath.getLast();
-            List<EClassLinkedSet> allPaths = findAllPaths(start, destination, hierarchySubGraph);
-
-            // iterate all classes in the path
-            for (EClass eClass : multiPath) {
-
-                if (eClass == start || eClass == destination) {
-                    continue;
-                }
-
-                int containedInPaths = occursInHowManyPaths(eClass, allPaths);
-                assert containedInPaths > 0;
-
-                if (containedInPaths == 1) {
-                    // iterate all paths
-                    // iterate all classes in path
-                    // add class to new path
-                    // until bottleneck is found
-                    // continue with other path
-
-                    // remove old multipath
-                    // add new multipath
-                    // discard if multi path is one or two segments long 
-                }
+            // has path to be split?
+            boolean pathSplit = checkAndSplitMutlipath(multiPath, hierarchySubGraph);
+            if (pathSplit) {
+                // reprocess lower path (result of split)
+            } else {
+                // proceed
+                i++;
             }
         }
+    }
+
+    private boolean checkAndSplitMutlipath(EClassLinkedSet multiPath, AsSubgraph<EClassifier, DefaultEdge> hierarchySubGraph) {
+
+        // determine all paths from start to destination
+        EClass start = multiPath.getFirst();
+        EClass destination = multiPath.getLast();
+        List<EClassLinkedSet> allPaths = findAllPaths(start, destination, hierarchySubGraph);
+
+        // iterate all classes in the path
+        for (EClass potentialBottleneckClass : multiPath) {
+
+            if (potentialBottleneckClass == start || potentialBottleneckClass == destination) {
+                continue;
+            }
+
+            // is class a bottleneck? 
+            int containedInPaths = occursInHowManyPaths(potentialBottleneckClass, allPaths);
+            assert containedInPaths > 0;
+            if (containedInPaths == 1) {
+
+                EClassLinkedSet lowerMultipath = new EClassLinkedSet();
+                EClassLinkedSet upperMultipath = new EClassLinkedSet();
+                splitMultipath(potentialBottleneckClass, allPaths, destination, lowerMultipath, upperMultipath);
+
+                // remove multipath that was split
+                multipaths.remove(multiPath);
+
+                // add new multipath, only if they are longer than two classes
+                // two classes cannot form a multipath
+                if (lowerMultipath.size() > 2) {
+                    multipaths.add(lowerMultipath);
+                }
+                if (upperMultipath.size() > 2) {
+                    multipaths.add(upperMultipath);
+                }
+
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private void splitMultipath(EClass bottleneckClass, List<EClassLinkedSet> allPaths, EClass destination, EClassLinkedSet lowerMultipath, EClassLinkedSet upperMultipath) {
+
+        // iterate all paths
+        for (EClassLinkedSet path : allPaths) {
+
+            boolean bottleneckReached = false;
+
+            // iterate all classes in path
+            for (EClass eClass : path) {
+                if (!bottleneckReached) {
+
+                    lowerMultipath.add(eClass);
+
+                    if (eClass == bottleneckClass) {
+                        upperMultipath.add(bottleneckClass);
+                        bottleneckReached = true;
+                    }
+
+                } else {
+                    upperMultipath.add(eClass);
+                }
+            }
+            assert bottleneckReached;
+        }
+
+        ensureLastPosition(lowerMultipath, bottleneckClass);
+        ensureLastPosition(upperMultipath, destination);
+    }
+
+    private void ensureLastPosition(EClassLinkedSet multipath, EClass eClass) {
+        multipath.remove(eClass);
+        multipath.add(eClass);
     }
 
     private int occursInHowManyPaths(EClass eClass, List<EClassLinkedSet> paths) {
