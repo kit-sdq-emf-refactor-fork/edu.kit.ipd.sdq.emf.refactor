@@ -22,9 +22,6 @@ public final class NPC implements IMetricCalculator {
     @Override
     public double calculate() {
         EClass eClass = (EClass) context.get(0);
-        System.out
-                .println(eClass.getName() + ": " + eClass.getEAttributes().size() + " " + eClass.getEReferences().size() + " " + eClass.getESuperTypes().size() + " " + eClass.getEOperations().size());
         return (double) eClass.getEAttributes().size() + eClass.getEReferences().size() + eClass.getESuperTypes().size() + eClass.getEOperations().size();
-
     }
 }
