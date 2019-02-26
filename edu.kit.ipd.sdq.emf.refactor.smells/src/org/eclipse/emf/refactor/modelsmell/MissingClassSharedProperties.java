@@ -4,17 +4,17 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.function.BiPredicate;
 
-import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.ENamedElement;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.ETypedElement;
 import org.eclipse.emf.refactor.smells.core.MetricBasedModelSmellFinderClass;
 
+import edu.kit.ipd.sdq.ecoregraph.util.EcoreHelper;
 import edu.kit.ipd.sdq.emf.refactor.smells.util.DetectionHelper;
 
 /**
  * Checks the number of equal EAttributes to other EClasses
- * 
- * @author renehahn
  */
 public final class MissingClassSharedProperties extends MetricBasedModelSmellFinderClass {
 
@@ -22,7 +22,6 @@ public final class MissingClassSharedProperties extends MetricBasedModelSmellFin
     public LinkedList<LinkedList<EObject>> findSmell(EObject root) {
 
         double threshold = getLimit();
-//	    AsSubgraph<EClassifier, DefaultEdge> hierarchyGraph = EcoreGraphUtil.hierarchySubGraph(ModelSmellFinder.ecoreGraph);
         LinkedList<LinkedList<EObject>> results = new LinkedList<>();
 
         // iterate all classes
@@ -45,39 +44,39 @@ public final class MissingClassSharedProperties extends MetricBasedModelSmellFin
         return results;
     }
 
-    private int getSharedPropertiesCount(EClass eClass, EClass otherClass) {
+    private int getSharedPropertiesCount(EClass c1, EClass c2) {
         int sharedProperties = 0;
-        sharedProperties += intersectionSize(eClass.getEAttributes(), otherClass.getEAttributes(), (EAttribute a1, EAttribute a2) -> {
-            return attributesEqual(a1, a2);
-        });
-        //TODO
+        sharedProperties += intersectionSize(c1.getEAttributes(), c2.getEAttributes(), this::typedElememEquals);
+        sharedProperties += intersectionSize(c1.getEReferences(), c2.getEReferences(), this::typedElememEquals);
+        sharedProperties += intersectionSize(c1.getESuperTypes(), c2.getESuperTypes(), EcoreHelper::eClassEquals);
+        sharedProperties += intersectionSize(c1.getEOperations(), c2.getEOperations(), this::typedElememEquals);
         return sharedProperties;
     }
 
-    private boolean attributesEqual(EAttribute a1, EAttribute a2) {
+    private boolean typedElememEquals(ETypedElement a1, ETypedElement a2) {
         return haveEqualNames(a1, a2) && haveEqualTypes(a1, a2) && haveEqualMultiplicities(a1, a2);
     }
 
-    private boolean haveEqualMultiplicities(EAttribute attr, EAttribute att) {
-        return ((attr.getLowerBound() == att.getLowerBound()) && (attr.getUpperBound() == att.getUpperBound()));
+    private boolean haveEqualMultiplicities(ETypedElement e1, ETypedElement e2) {
+        return ((e1.getLowerBound() == e2.getLowerBound()) && (e1.getUpperBound() == e2.getUpperBound()));
     }
 
-    private boolean haveEqualTypes(EAttribute attr, EAttribute att) {
-        return ((att.getEType() == null) && (attr.getEType() == null)) || ((att.getEType() != null) && (attr.getEType() != null)) && (att.getEType().equals(attr.getEType()));
+    private boolean haveEqualTypes(ETypedElement e1, ETypedElement e2) {
+        return ((e2.getEType() == null) && (e1.getEType() == null)) || ((e2.getEType() != null) && (e1.getEType() != null)) && (e2.getEType().equals(e1.getEType()));
     }
 
-    private boolean haveEqualNames(EAttribute attr, EAttribute att) {
-        if (attr == null || att == null)
+    private boolean haveEqualNames(ENamedElement e1, ENamedElement e2) {
+        if (e1 == null || e2 == null)
             return false;
-        if (attr.getName() == null || att.getName() == null)
+        if (e1.getName() == null || e2.getName() == null)
             return false;
-        return att.getName().equals(attr.getName());
+        return e2.getName().equals(e1.getName());
     }
 
-    private <E> int intersectionSize(List<E> c1, List<E> c2, BiPredicate<E, E> equalser) {
+    private <E> int intersectionSize(List<E> l1, List<E> l2, BiPredicate<E, E> equalser) {
         int size = 0;
-        for (E e1 : c1) {
-            for (E e2 : c2) {
+        for (E e1 : l1) {
+            for (E e2 : l2) {
                 if (equalser.test(e1, e2)) {
                     size++;
                 }
