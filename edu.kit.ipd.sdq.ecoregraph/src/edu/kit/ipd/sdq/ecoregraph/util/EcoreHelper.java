@@ -5,7 +5,7 @@ import org.eclipse.emf.ecore.EPackage;
 
 public final class EcoreHelper {
 
-    public static boolean equals(EClass eClass1, EClass eClass2) {
+    public static boolean eClassEquals(EClass eClass1, EClass eClass2) {
 
         if (eClass1 == eClass2)
             return true;

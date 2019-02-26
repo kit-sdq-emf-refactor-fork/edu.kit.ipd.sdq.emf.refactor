@@ -385,11 +385,11 @@ public class MultipathHierarchyDetector {
     }
 
     private boolean samePathStart(EClassLinkedSet path, EClassLinkedSet otherPath) {
-        return EcoreHelper.equals(path.getFirst(), otherPath.getFirst());
+        return EcoreHelper.eClassEquals(path.getFirst(), otherPath.getFirst());
     }
 
     private boolean samePathDestination(EClass ithDestination, EClassLinkedSet otherPath) {
-        return EcoreHelper.equals(ithDestination, otherPath.getLast());
+        return EcoreHelper.eClassEquals(ithDestination, otherPath.getLast());
     }
 
     public List<EClassLinkedSet> getMultipaths() {
